@@ -8,6 +8,13 @@
 //   playMusic(this, 'bgm-overworld');   // in scene.create()
 //   stopMusic(this);                     // when you need silence
 
+// Pending-unlock state. While scene.sound.locked, playMusic queues at most ONE
+// track here instead of stacking anonymous 'unlocked' listeners — otherwise
+// MainMenu and Overworld both queueing bgm-overworld before the first tap
+// resolves starts two overlapping loops, and the first one leaks untracked.
+let pendingKey = null;
+let pendingHandler = null;
+
 export function playMusic(scene, key, volume = 0.4) {
   const game = scene.game || scene.sys.game;
   const currentKey = game.registry.get('currentMusicKey');
@@ -17,6 +24,9 @@ export function playMusic(scene, key, volume = 0.4) {
     const existing = game.registry.get('currentMusicInstance');
     if (existing && existing.isPlaying) return;
   }
+
+  // Same track already queued behind the autoplay lock — do nothing.
+  if (scene.sound.locked && pendingKey === key) return;
 
   // Stop whatever is playing now.
   stopMusic(scene);
@@ -28,10 +38,21 @@ export function playMusic(scene, key, volume = 0.4) {
   }
 
   // Handle browser autoplay lock: defer until the first user interaction.
+  // scene.sound is the game-wide sound manager, so the listener survives the
+  // originating scene; a newer queued track replaces an older pending one.
   if (scene.sound.locked) {
-    scene.sound.once('unlocked', () => {
-      _startTrack(scene, key, volume);
-    });
+    if (pendingHandler) scene.sound.off('unlocked', pendingHandler);
+    pendingKey = key;
+    pendingHandler = () => {
+      const queuedKey = pendingKey;
+      pendingKey = null;
+      pendingHandler = null;
+      const cur = game.registry.get('currentMusicKey');
+      const inst = game.registry.get('currentMusicInstance');
+      if (cur === queuedKey && inst && inst.isPlaying) return;
+      _startTrack(scene, queuedKey, volume);
+    };
+    scene.sound.once('unlocked', pendingHandler);
   } else {
     _startTrack(scene, key, volume);
   }
@@ -47,6 +68,12 @@ function _startTrack(scene, key, volume) {
 
 export function stopMusic(scene) {
   const game = scene.game || scene.sys.game;
+  // Cancel any track still queued behind the autoplay lock.
+  if (pendingHandler) {
+    scene.sound.off('unlocked', pendingHandler);
+    pendingHandler = null;
+    pendingKey = null;
+  }
   const instance = game.registry.get('currentMusicInstance');
   if (instance) {
     if (instance.isPlaying) instance.stop();

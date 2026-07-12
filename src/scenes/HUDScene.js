@@ -11,6 +11,7 @@
 
 import Phaser from 'phaser';
 import { FAILURE_THRESHOLD } from '../systems/GameStateManager.js';
+import { getObjectiveText } from '../systems/Objective.js';
 
 export default class HUDScene extends Phaser.Scene {
   constructor() {
@@ -18,18 +19,26 @@ export default class HUDScene extends Phaser.Scene {
   }
 
   create() {
+    // Both HUD labels carry a black stroke so they stay legible over any
+    // room's wall tiles — the per-room art ranges from dark bar shelves to
+    // bright kitchen tile, and unstroked white text washes out on the light
+    // rooms.
+    const hudStyle = {
+      font: '8px monospace',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 3,
+    };
+
     // Top-left: failure counter, updated via registry change events.
     const initialCount = this.registry.get('failureCount') || 0;
-    this.failText = this.add.text(4, 4, `Failures: ${initialCount}/${FAILURE_THRESHOLD}`, {
-      font: '8px monospace',
-      color: '#ffffff',
-    }).setDepth(1000);
+    this.failText = this.add.text(4, 4, `Failures: ${initialCount}/${FAILURE_THRESHOLD}`, hudStyle)
+      .setDepth(1000);
 
-    // Top-right: objective text (static for Session 3).
-    this.objectiveText = this.add.text(252, 4, 'Objective: Find Cody', {
-      font: '8px monospace',
-      color: '#ffffff',
-    }).setOrigin(1, 0).setDepth(1000);
+    // Top-right: live objective, recomputed whenever the relevant registry
+    // keys change so the ritual order is always recoverable at a glance.
+    this.objectiveText = this.add.text(252, 4, getObjectiveText(this.game), hudStyle)
+      .setOrigin(1, 0).setDepth(1000);
 
     // Subscribe to registry changes for the failure counter.
     this.onFailureChanged = (parent, value) => {
@@ -37,12 +46,25 @@ export default class HUDScene extends Phaser.Scene {
     };
     this.registry.events.on('changedata-failureCount', this.onFailureChanged, this);
 
+    // Any of these keys changing can change the next objective.
+    this.onObjectiveChanged = () => {
+      this.objectiveText.setText(getObjectiveText(this.game));
+    };
+    this.registry.events.on('changedata-ritualProgress', this.onObjectiveChanged, this);
+    this.registry.events.on('changedata-completedMinigames', this.onObjectiveChanged, this);
+    this.registry.events.on('changedata-talkedToCody', this.onObjectiveChanged, this);
+
     this.events.once('shutdown', this.shutdown, this);
   }
 
   shutdown() {
     if (this.onFailureChanged) {
       this.registry.events.off('changedata-failureCount', this.onFailureChanged, this);
+    }
+    if (this.onObjectiveChanged) {
+      this.registry.events.off('changedata-ritualProgress', this.onObjectiveChanged, this);
+      this.registry.events.off('changedata-completedMinigames', this.onObjectiveChanged, this);
+      this.registry.events.off('changedata-talkedToCody', this.onObjectiveChanged, this);
     }
   }
 }

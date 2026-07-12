@@ -31,11 +31,15 @@ export class RhythmBar {
       .setStrokeStyle(1, 0x444444)
       .setDepth(4);
 
-    // Hit window cue: the pixel width matches roughly how much travel
-    // happens during HIT_WINDOW_MS so the player can read the timing.
-    const windowPixels = (HIT_WINDOW_MS / NOTE_TRAVEL_MS) * this.barSpan * 2;
-    this.hitWindow = scene.add.rectangle(this.hitZoneX, this.centerY, windowPixels, height - 2, 0x40c040, 0.2)
-      .setDepth(5);
+    // Hit window cue: the pixel width matches how much travel happens
+    // during HIT_WINDOW_MS. Notes approach from the right and stop AT the
+    // hit zone, so the cue extends right of the zone (the approach side)
+    // instead of straddling it and clipping off the bar's left edge.
+    const windowPixels = (HIT_WINDOW_MS / NOTE_TRAVEL_MS) * this.barSpan;
+    this.hitWindow = scene.add.rectangle(
+      this.hitZoneX + windowPixels / 2, this.centerY,
+      windowPixels, height - 2, 0x40c040, 0.2
+    ).setDepth(5);
 
     this.hitZone = scene.add.rectangle(this.hitZoneX, this.centerY, 4, height - 2, 0x40c040)
       .setDepth(6);

@@ -168,14 +168,20 @@ export default class CutsceneScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x000000);
     this.cameras.main.fadeIn(1000, 0, 0, 0);
 
-    // Sky + sun + beach + Cody.
-    this.add.rectangle(128, 60, 256, 120, 0x60a0ff);
-    this.add.circle(200, 40, 20, 0xfff080);
-    this.add.rectangle(128, 172, 256, 104, 0xf0d080);
-    if (this.textures.exists('cody')) {
-      this.add.sprite(128, 160, 'cody').setDisplaySize(16, 16);
+    // Beach scene. Prefers the painted victory illustration (Cody waking on
+    // the morning shore); falls back to the Session 7 sky/sun/beach rects.
+    const hasArt = this.textures.exists('cutscene-victory');
+    if (hasArt) {
+      this.add.image(128, 112, 'cutscene-victory').setDisplaySize(256, 224);
     } else {
-      this.add.rectangle(128, 160, 16, 16, 0x40c040);
+      this.add.rectangle(128, 60, 256, 120, 0x60a0ff);
+      this.add.circle(200, 40, 20, 0xfff080);
+      this.add.rectangle(128, 172, 256, 104, 0xf0d080);
+      if (this.textures.exists('cody')) {
+        this.add.sprite(128, 160, 'cody').setDisplaySize(16, 16);
+      } else {
+        this.add.rectangle(128, 160, 16, 16, 0x40c040);
+      }
     }
 
     // Title is baked into the scrolling credits block so it can't collide
@@ -200,6 +206,9 @@ export default class CutsceneScene extends Phaser.Scene {
       font: '10px monospace',
       color: '#ffffff',
       align: 'center',
+      // Dark stroke keeps the credits legible over the bright beach art.
+      stroke: '#000000',
+      strokeThickness: hasArt ? 3 : 0,
     }).setOrigin(0.5, 0).setDepth(100);
 
     this.tweens.add({

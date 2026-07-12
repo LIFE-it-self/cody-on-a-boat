@@ -24,9 +24,10 @@
 //   from PipeSmoke). Storing raw wakefulness would make the bar read
 //   green when Cody is AWAKE (visually wrong). Instead we track
 //   "sleepLevel" starting at 100 and calling meter.add(-wakeOnMiss) on
-//   each miss. Functionally identical (4 misses * 25 = floor at 0 =
-//   lose), visually correct (green = asleep, red = awake). The label
-//   is "CODY ASLEEP" for the same clarity reason.
+//   each miss. With wakeOnMiss 50, two misses floor the meter at 0 =
+//   lose — the finale demands 3 of 4 shushes. Visually correct
+//   (green = asleep, red = awake). The label is "CODY ASLEEP" for the
+//   same clarity reason.
 
 import { BaseMinigame } from './BaseMinigame.js';
 import { PowerMeter } from '../../ui/PowerMeter.js';
@@ -54,16 +55,25 @@ export default class MermaidNap extends BaseMinigame {
     this.currentLabel = null;
     this.shushTimer = null;
     this.noiseTimers = [];
+    // Noises that have fully resolved (shushed or missed). Once all of them
+    // are in, the game ends immediately — no dead air waiting for the clock.
+    this.noisesResolved = 0;
 
-    // Nighttime cabin background.
-    this.add.rectangle(128, 112, 256, 224, 0x001030);
+    // Nighttime cabin background — the painted scene includes its own
+    // moonlit porthole and bunk, so the rect/moon/bed fallbacks are skipped
+    // when the art exists. The sleepers below are live actors either way.
+    if (this.textures.exists('bg-mermaid-nap')) {
+      this.add.image(128, 112, 'bg-mermaid-nap').setDepth(-100);
+    } else {
+      this.add.rectangle(128, 112, 256, 224, 0x001030);
 
-    // Small moon in the corner — atmospheric only.
-    this.add.circle(224, 28, 10, 0xfff080).setDepth(1);
+      // Small moon in the corner — atmospheric only.
+      this.add.circle(224, 28, 10, 0xfff080).setDepth(1);
 
-    // Bed.
-    this.add.rectangle(128, 140, 80, 20, 0x606060)
-      .setStrokeStyle(1, 0x909090);
+      // Bed.
+      this.add.rectangle(128, 140, 80, 20, 0x606060)
+        .setStrokeStyle(1, 0x909090);
+    }
 
     // Sleeping Cody on the bed.
     if (this.textures.exists('cody')) {
@@ -181,7 +191,22 @@ export default class MermaidNap extends BaseMinigame {
 
       if (this.meter.value <= 0) {
         this.lose();
+        return;
       }
+      this.resolveNoise();
+    });
+  }
+
+  // A noise finished (shushed or missed). When the last one resolves and
+  // Cody is still asleep, win right away after a short beat so the final
+  // flash reads before the overlay.
+  resolveNoise() {
+    this.noisesResolved++;
+    if (this.noisesResolved < this.numNoises) return;
+    this.time.delayedCall(500, () => {
+      if (this.state !== 'PLAY') return;
+      if (this.meter.value > 0) this.win();
+      else this.lose();
     });
   }
 
@@ -216,6 +241,8 @@ export default class MermaidNap extends BaseMinigame {
         if (flash && flash.active) flash.destroy();
       },
     });
+
+    this.resolveNoise();
   }
 
   update(time, delta) {

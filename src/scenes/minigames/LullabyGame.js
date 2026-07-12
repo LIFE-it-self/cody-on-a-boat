@@ -134,6 +134,28 @@ export default class LullabyGame extends BaseMinigame {
           });
         }
       }
+    } else {
+      // Wrong-timing tap — dock a hit so mashing can't clear the game,
+      // and flash Cody red briefly (CokeDrinkGame pattern).
+      if (this.hits > 0) {
+        this.hits--;
+        if (this.hitText && this.hitText.active) {
+          this.hitText.setText(this.hits + '/' + this.beats);
+        }
+      }
+      if (this.cody && this.cody.active) {
+        if (this.cody.setTint) {
+          this.cody.setTint(0xff4040);
+          this.time.delayedCall(100, () => {
+            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.clearTint();
+          });
+        } else {
+          this.cody.setFillStyle(0xff4040);
+          this.time.delayedCall(100, () => {
+            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.setFillStyle(0x40c040);
+          });
+        }
+      }
     }
   }
 }

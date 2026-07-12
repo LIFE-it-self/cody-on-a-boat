@@ -73,10 +73,19 @@
     <div id="game-container"></div>
     <script type="module" src="/src/index.js"></script>
     <script>
-      if ('serviceWorker' in navigator) {
+      // Register the offline-cache service worker in production only. On
+      // localhost the cache-first SW serves stale Vite modules across edits,
+      // silently masking code changes during development.
+      const isLocalDev = ['localhost', '127.0.0.1'].includes(location.hostname);
+      if ('serviceWorker' in navigator && !isLocalDev) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').catch(() => {});
         });
+      }
+      if ('serviceWorker' in navigator && isLocalDev) {
+        // Clean up any SW a previous dev session left behind.
+        navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+        if (window.caches) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k)));
       }
     </script>
   </body>

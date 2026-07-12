@@ -1,12 +1,17 @@
 // MotorboatGame — Act 3, non-ritual. Cody shoves his face into the boat
 // dashboard and blows. Player rapid-taps to keep a vertical PowerMeter
-// above empty for 20 seconds. First scene in the project to use the
-// PowerMeter in vertical orientation.
+// above empty for the configured duration (see levels.js for the live
+// numbers). First scene in the project to use the PowerMeter in vertical
+// orientation.
 //
-// Tap inputs (all read the same config: tapPower=12, alternateBonus=4):
-//   - SPACE           → +tapPower (12). Does NOT touch lastAltKey.
-//   - Q / W           → alternating +8, same-twice +4. Updates lastAltKey.
+// Tap inputs (derived from config tapPower / alternateBonus):
+//   - Q / W           → alternating +(tapPower - alternateBonus),
+//                       same-twice +(tapPower - 2*alternateBonus).
+//                       Updates lastAltKey.
 //   - Mobile L / R    → mirrors Q/W. Updates lastAltKey.
+//   - SPACE           → weakest (+samePower). Does NOT touch lastAltKey —
+//                       alternation is the mechanic; single-key mashing
+//                       can't keep up with the decay.
 //   - Mobile Center   → literal +6. Does NOT touch lastAltKey.
 //
 // Lose path uses a `stalled` flag: when the meter hits 0 we suspend motion
@@ -43,12 +48,16 @@ export default class MotorboatGame extends BaseMinigame {
 
     playMusic(this, 'bgm-minigame');
 
-    // Background — sky (top half) + sea (bottom half).
-    this.add.rectangle(128, 56, 256, 112, 0x4080ff);
-    this.add.rectangle(128, 168, 256, 112, 0x204080);
-
-    // Dashboard Cody's face is pressed against.
-    this.add.rectangle(128, 140, 200, 16, 0x886844).setStrokeStyle(1, 0xffffff);
+    // Background — painted dashboard/windshield scene when the art exists;
+    // otherwise sky (top half) + sea (bottom half) + dashboard rects.
+    if (this.textures.exists('bg-motorboat')) {
+      this.add.image(128, 112, 'bg-motorboat').setDepth(-100);
+    } else {
+      this.add.rectangle(128, 56, 256, 112, 0x4080ff);
+      this.add.rectangle(128, 168, 256, 112, 0x204080);
+      // Dashboard Cody's face is pressed against.
+      this.add.rectangle(128, 140, 200, 16, 0x886844).setStrokeStyle(1, 0xffffff);
+    }
 
     // Cody — pressed into the dashboard from behind.
     if (this.textures.exists('cody')) {
@@ -83,8 +92,9 @@ export default class MotorboatGame extends BaseMinigame {
       label: 'POWER',
     });
 
-    // Instruction label.
-    this.add.text(8, 16, 'TAP/ALTERNATE!', {
+    // Instruction label — names the actual desktop keys, since SPACE is the
+    // trained tap key everywhere else but is deliberately weak here.
+    this.add.text(8, 16, 'ALTERNATE Q/W or L/R!', {
       font: '8px monospace',
       color: '#aaaaaa',
     }).setDepth(100);
@@ -139,7 +149,9 @@ export default class MotorboatGame extends BaseMinigame {
   spaceTap() {
     if (this.state !== 'PLAY') return;
     if (this.stalled) return;
-    this.powerMeter.add(this.tapPower);
+    // SPACE is deliberately the weakest input so desktop players have to
+    // alternate Q/W like mobile players alternate L/R.
+    this.powerMeter.add(this.samePower);
     this._playSplash();
   }
 

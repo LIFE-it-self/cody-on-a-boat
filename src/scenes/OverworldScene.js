@@ -13,6 +13,7 @@ import { DIALOGS } from '../data/dialogs.js';
 import { LEVELS } from '../data/levels.js';
 import { EventBus } from '../systems/EventBus.js';
 import { assertCanStartRitual } from '../systems/SequenceGuard.js';
+import { getNextStep, actMinigameDone } from '../systems/Objective.js';
 import { playMusic } from '../systems/MusicManager.js';
 
 export default class OverworldScene extends Phaser.Scene {
@@ -29,6 +30,10 @@ export default class OverworldScene extends Phaser.Scene {
     this.isTransitioning = false;
     this.dialogActive = false;
     this.npcs = [];
+    // Tile of the last soft-blocked ritual trigger. While the player stands
+    // on it, update() won't re-fire the blocking dialog every frame; cleared
+    // as soon as they step off.
+    this.softBlockedAt = null;
   }
 
   create() {
@@ -63,10 +68,14 @@ export default class OverworldScene extends Phaser.Scene {
     if (this.roomId === 'main-deck') {
       this.npcs.push(new Cody(this, 8, 6, 'cody-intro'));
     } else if (this.roomId === 'bar') {
-      this.npcs.push(new GenericNPC(this, 4, 6, 'bar-bartender', null, 0x8080c0));
+      this.npcs.push(new GenericNPC(this, 4, 6, 'bar-bartender', 'bartender', 0x8080c0));
     } else if (this.roomId === 'galley') {
-      this.npcs.push(new Mermaid(this, 8, 10, 'galley-mermaid'));
-      this.npcs.push(new GenericNPC(this, 12, 8, 'galley-cook', 'mermaid-2', 0xff69b4));
+      // Pre-pipe, the galley crew shouldn't claim you "smell like smoke".
+      // Dialog is picked at room entry; the scene restarts on every door
+      // traversal so the state is always fresh.
+      const pipeDone = (this.game.registry.get('ritualProgress') || []).length >= 1;
+      this.npcs.push(new Mermaid(this, 8, 10, pipeDone ? 'galley-mermaid' : 'galley-mermaid-early'));
+      this.npcs.push(new GenericNPC(this, 12, 8, pipeDone ? 'galley-cook' : 'galley-cook-early', 'mermaid-2', 0xff69b4));
     } else if (this.roomId === 'bridge') {
       this.npcs.push(new GenericNPC(this, 8, 4, 'bridge-parrot', 'bridge-parrot', 0x40c040));
     } else if (this.roomId === 'cabin-corridor') {
@@ -105,12 +114,17 @@ export default class OverworldScene extends Phaser.Scene {
     }
 
     // Trigger zones fire once the player lands on their tile, same pattern
-    // as doors. Sequence guards live inside startMinigameForLevel.
+    // as doors. Ritual gating lives inside startMinigameForLevel; a
+    // soft-blocked trigger stays inert until the player steps off it.
     const trigger = this.triggers.find(t => t.x === this.player.tileX && t.y === this.player.tileY);
-    if (trigger) {
+    const standingOnBlocked = this.softBlockedAt
+      && this.softBlockedAt.x === this.player.tileX
+      && this.softBlockedAt.y === this.player.tileY;
+    if (trigger && !standingOnBlocked) {
       this.startMinigameForLevel(trigger.levelId);
       return;
     }
+    if (!standingOnBlocked) this.softBlockedAt = null;
 
     // Held-key movement. The if/else chain prevents diagonal moves: only
     // one direction can fire per frame.
@@ -120,19 +134,50 @@ export default class OverworldScene extends Phaser.Scene {
     else if (this.cursors.down.isDown)  this.handleMove('down');
   }
 
-  // Draw a yellow `!` marker at every active trigger tile. Triggers whose
-  // level is already in completedMinigames are dormant — no marker, the
-  // player walks right over them.
+  // Draw a marker at every active trigger tile. Triggers whose level is
+  // already in completedMinigames are dormant — no marker, the player walks
+  // right over them. Marker language:
+  //   yellow `!`          — safe minigame, step on it any time
+  //   pulsing red `!`     — ritual step that is READY (right order, act
+  //                         minigame cleared)
+  //   gray `?`            — ritual step that would refuse to start; stepping
+  //                         on it soft-blocks with a hint dialog, no penalty
   renderTriggerMarkers() {
     const done = this.game.registry.get('completedMinigames') || [];
+    const nextStep = (this.game.registry.get('ritualProgress') || []).length + 1;
     this.triggers.forEach(t => {
       if (done.includes(t.levelId)) return;
-      this.add.text(
-        t.x * TILE_SIZE + TILE_SIZE / 2,
-        t.y * TILE_SIZE + TILE_SIZE / 2,
-        '!',
-        { font: '12px monospace', color: '#ffff00' }
-      ).setOrigin(0.5).setDepth(5);
+      const level = LEVELS[t.levelId];
+      const px = t.x * TILE_SIZE + TILE_SIZE / 2;
+      const py = t.y * TILE_SIZE + TILE_SIZE / 2;
+
+      if (level && level.isRitual) {
+        const ready = level.ritualStep === nextStep && actMinigameDone(this.game, level);
+        if (ready) {
+          const marker = this.add.text(px, py, '!', {
+            font: '12px monospace',
+            color: '#ff4040',
+          }).setOrigin(0.5).setDepth(5);
+          this.tweens.add({
+            targets: marker,
+            scale: 1.4,
+            duration: 400,
+            yoyo: true,
+            repeat: -1,
+          });
+        } else {
+          this.add.text(px, py, '?', {
+            font: '12px monospace',
+            color: '#9090a0',
+          }).setOrigin(0.5).setDepth(5);
+        }
+        return;
+      }
+
+      this.add.text(px, py, '!', {
+        font: '12px monospace',
+        color: '#ffff00',
+      }).setOrigin(0.5).setDepth(5);
     });
   }
 
@@ -233,7 +278,11 @@ export default class OverworldScene extends Phaser.Scene {
 
     let dialogId = npc.dialogId;
     if (dialogId === 'cody-intro' && this.game.registry.get('talkedToCody')) {
-      dialogId = 'cody-hint-1';
+      // Re-talking Cody always reports the actual next move so the ritual
+      // order is recoverable at any point, not one-shot memory.
+      const next = getNextStep(this.game);
+      dialogId = next ? `cody-next-${next.level.id}` : 'cody-hint-1';
+      if (!DIALOGS[dialogId]) dialogId = 'cody-hint-1';
     }
     const dialog = DIALOGS[dialogId];
     if (!dialog) return;
@@ -253,6 +302,17 @@ export default class OverworldScene extends Phaser.Scene {
     this.dialogActive = false;
   }
 
+  // A ritual trigger refused to start. Show the explanatory dialog and mark
+  // the tile so update() doesn't re-fire it while the player stands there.
+  showBlockedDialog(dialogId) {
+    const dialog = DIALOGS[dialogId];
+    if (!dialog) return;
+    this.softBlockedAt = { x: this.player.tileX, y: this.player.tileY };
+    this.dialogActive = true;
+    EventBus.once('dialog-complete', () => this.onDialogComplete(null));
+    this.scene.launch('DialogScene', { lines: dialog.lines });
+  }
+
   // Trigger-zone landing handler. Validates the level, runs the ritual
   // sequence guard if applicable, then hands off to TransitionScene which
   // shows the title card and launches the actual minigame scene.
@@ -265,10 +325,23 @@ export default class OverworldScene extends Phaser.Scene {
     const done = this.game.registry.get('completedMinigames') || [];
     if (done.includes(levelId)) return;
 
-    // Ritual steps must be attempted in order. assertCanStartRitual emits
-    // 'hurricane-fail' on failure; HUDScene's listener takes over from
-    // there (banner + reset + bounce to MainMenu).
+    // Ritual gating. A ritual that isn't ready SOFT-BLOCKS: an in-character
+    // dialog explains what to do instead, no failure, no hurricane. Two
+    // gates: order first (so probing a far-ahead ritual names the expected
+    // next STEP rather than that far act's minigame), then the act gate
+    // (GAME-DESIGN.md §2) — which by then always names the correct act.
     if (level.isRitual) {
+      const expected = (this.game.registry.get('ritualProgress') || []).length + 1;
+      if (level.ritualStep !== expected) {
+        this.showBlockedDialog(`ritual-blocked-order-${Math.min(expected, 4)}`);
+        return;
+      }
+      if (!actMinigameDone(this.game, level)) {
+        this.showBlockedDialog(`ritual-blocked-minigame-${level.act}`);
+        return;
+      }
+      // Safety net — with the gates above this always passes; if it ever
+      // doesn't, it emits 'hurricane-fail' and CutsceneRouter takes over.
       if (!assertCanStartRitual(this.game, level.ritualStep)) {
         this.isTransitioning = true;
         return;

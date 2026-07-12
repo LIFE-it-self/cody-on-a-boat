@@ -67,8 +67,9 @@ export class BaseMinigame extends Phaser.Scene {
     this.state = 'LOSE';
     GameStateManager.recordFailure(this.game);
     this.showResultOverlay('LOSE', 0xc04040, () => {
-      // If recordFailure pushed us over the threshold, HUDScene's
-      // hurricane handler will override this scene.start() within 2s.
+      // If recordFailure pushed us over the threshold, CutsceneRouter has
+      // already caught 'hurricane-fail' and its microtask will stop this
+      // scene and start CutsceneScene, overriding this scene.start().
       this.scene.start(this.returnSceneKey, this.returnSceneData);
     });
   }

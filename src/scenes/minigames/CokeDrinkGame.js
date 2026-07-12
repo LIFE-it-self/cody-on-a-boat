@@ -25,6 +25,7 @@ export default class CokeDrinkGame extends BaseMinigame {
     const cfg = (this.levelConfig && this.levelConfig.config) || {};
     this.beats = cfg.beats || 8;
     this.required = cfg.requiredHits || 6;
+    this.spacing = cfg.noteSpacingMs || 750;
 
     // Painted background — falls back to default navy if image is missing.
     if (this.textures.exists('bg-coke-drink')) {
@@ -96,14 +97,14 @@ export default class CokeDrinkGame extends BaseMinigame {
 
       this.rhythmBar = new RhythmBar(this, 16, 188, 224, 20);
       for (let i = 0; i < this.beats; i++) {
-        this.rhythmBar.addNote(1000 + i * 750);
+        this.rhythmBar.addNote(1000 + i * this.spacing);
       }
       this.rhythmBar.start();
 
       this.input.on('pointerdown', () => this.tryHit());
       this.input.keyboard.on('keydown-SPACE', () => this.tryHit());
 
-      const lastNoteAt = 1000 + (this.beats - 1) * 750;
+      const lastNoteAt = 1000 + (this.beats - 1) * this.spacing;
       this.time.delayedCall(lastNoteAt + 300, () => {
         if (this.state !== 'PLAY') return;
         if (this.hits >= this.required) this.win();
@@ -132,7 +133,14 @@ export default class CokeDrinkGame extends BaseMinigame {
         });
       }
     } else {
-      // Wrong-timing tap — flash Cody red briefly.
+      // Wrong-timing tap — dock a hit so mashing can't clear the game,
+      // and flash Cody red briefly.
+      if (this.hits > 0) {
+        this.hits--;
+        if (this.hitText && this.hitText.active) {
+          this.hitText.setText(this.hits + '/' + this.beats);
+        }
+      }
       if (this.cody && this.cody.active) {
         if (this.cody.setTint) this.cody.setTint(0xff4040);
         else this.cody.setFillStyle(0xff4040);

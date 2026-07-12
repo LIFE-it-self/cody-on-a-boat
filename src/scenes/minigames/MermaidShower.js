@@ -1,9 +1,11 @@
 // MermaidShower — Ritual Step 3. Cody stands under a shower. The player
 // holds LEFT/RIGHT (keyboard) or tap-and-hold the on-screen L/R buttons
 // to drive a temperature indicator. Mermaids randomly splash the
-// temperature by ±15 every 1.2s. Win by accumulating 10 cumulative
-// seconds in the green zone (35..65) within a 25-second total window.
-// The in-zone counter PAUSES when out of zone — it never decreases.
+// temperature by ±15 every splashIntervalMs. Win by accumulating
+// targetSecondsInZone cumulative seconds in the green zone (config
+// greenZone — the painted band, Cody's tint, and the scoring all derive
+// from the same values) within totalDurationMs. The in-zone counter
+// PAUSES when out of zone — it never decreases.
 //
 // Sequence guard: ritual step 3 is enforced by OverworldScene BEFORE this
 // scene starts. Do NOT call assertCanStartRitual from here, and do NOT
@@ -40,8 +42,14 @@ export default class MermaidShower extends BaseMinigame {
     this.touchLeft = false;
     this.touchRight = false;
 
-    // Dim bathroom background.
-    this.add.rectangle(128, 112, 256, 224, 0x202040);
+    // Painted bathroom background when the art exists (its shower head is
+    // painted top-center where the droplets spawn); dim navy fallback.
+    this.hasBgArt = this.textures.exists('bg-mermaid-shower');
+    if (this.hasBgArt) {
+      this.add.image(128, 112, 'bg-mermaid-shower').setDepth(-100);
+    } else {
+      this.add.rectangle(128, 112, 256, 224, 0x202040);
+    }
 
     // Temperature bar (top of screen). 200px wide, 10px tall.
     this.barX = 28;
@@ -50,13 +58,16 @@ export default class MermaidShower extends BaseMinigame {
     const barH = 10;
 
     // Zones are painted first (depth 7), border goes on top (depth 8).
-    // Widths sum to 200: cold(40)+cool(30)+green(60)+warm(40)+hot(30).
+    // The painted green band is DERIVED from the scoring greenZone config so
+    // what looks green is exactly what scores; cool/warm bands are 15 temp
+    // units on either side of it. Widths are temp units * (barW / 100).
+    const unit = this.barW / 100;
     const zones = [
-      { w: 40, color: 0x4040ff },  // cold-blue   0–20%
-      { w: 30, color: 0x40a0c0 },  // cool-cyan   20–35%
-      { w: 60, color: 0x40c040 },  // green       35–65%
-      { w: 40, color: 0xc08040 },  // warm-orange 65–85%
-      { w: 30, color: 0xc04040 },  // hot-red     85–100%
+      { w: (this.greenMin - 15) * unit, color: 0x4040ff },            // cold-blue
+      { w: 15 * unit, color: 0x40a0c0 },                              // cool-cyan
+      { w: (this.greenMax - this.greenMin) * unit, color: 0x40c040 }, // green (scoring band)
+      { w: 15 * unit, color: 0xc08040 },                              // warm-orange
+      { w: (100 - this.greenMax - 15) * unit, color: 0xc04040 },      // hot-red
     ];
     let zx = this.barX;
     zones.forEach(z => {
@@ -82,8 +93,11 @@ export default class MermaidShower extends BaseMinigame {
       0xffffff
     ).setDepth(9);
 
-    // Showerhead — small white rectangle centered above Cody.
-    this.add.rectangle(128, 76, 24, 6, 0xffffff).setDepth(6);
+    // Showerhead — small white rectangle centered above Cody. The painted
+    // background has its own shower head, so skip the rect when art exists.
+    if (!this.hasBgArt) {
+      this.add.rectangle(128, 76, 24, 6, 0xffffff).setDepth(6);
+    }
 
     // Cody — slightly taller (16x20) since he's standing, not just a head.
     if (this.textures.exists('cody')) {
@@ -169,17 +183,19 @@ export default class MermaidShower extends BaseMinigame {
     });
   }
 
+  // Both color feedbacks switch on the same greenMin/greenMax the scoring
+  // uses, so the visuals and the in-zone accumulator always agree.
   colorForTemperature() {
-    if (this.temperature < 20) return 0x4040ff;
-    if (this.temperature < 35) return 0x40a0c0;
-    if (this.temperature <= 65) return 0xffffff;
-    if (this.temperature <= 85) return 0xc08040;
+    if (this.temperature < this.greenMin - 15) return 0x4040ff;
+    if (this.temperature < this.greenMin) return 0x40a0c0;
+    if (this.temperature <= this.greenMax) return 0xffffff;
+    if (this.temperature <= this.greenMax + 15) return 0xc08040;
     return 0xc04040;
   }
 
   codyTintForTemperature() {
-    if (this.temperature < 35) return 0x80a0ff;
-    if (this.temperature <= 65) return 0x40c040;
+    if (this.temperature < this.greenMin) return 0x80a0ff;
+    if (this.temperature <= this.greenMax) return 0x40c040;
     return 0xff6040;
   }
 

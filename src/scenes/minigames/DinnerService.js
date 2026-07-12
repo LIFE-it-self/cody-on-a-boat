@@ -50,6 +50,11 @@ export default class DinnerService extends BaseMinigame {
   setupGame() {
     playMusic(this, 'bgm-minigame');
 
+    // Painted dining-room background — default navy when the art is missing.
+    if (this.textures.exists('bg-dinner-service')) {
+      this.add.image(128, 112, 'bg-dinner-service').setDepth(-100);
+    }
+
     // Header instruction (mirrors CokeDrink/PipeSmoke top-left label).
     this.add.text(8, 16, 'TAP THE MOST MICHELIN CHOICE', {
       font: '8px monospace',

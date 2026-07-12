@@ -43,6 +43,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('k-fish-red', 'assets/sprites/k-fish-red.png');
     this.load.image('cabin-ghost', 'assets/sprites/cabin-ghost.png');
     this.load.image('bridge-parrot', 'assets/sprites/bridge-parrot.png');
+    this.load.image('bartender', 'assets/sprites/bartender.png');
 
     // --- Tilesets ---
     this.load.image('tile-floor', 'assets/tilesets/floor.png');
@@ -63,11 +64,23 @@ export default class BootScene extends Phaser.Scene {
     // --- Cutscene illustrations ---
     this.load.image('cutscene-hurricane', 'assets/cutscenes/hurricane.png');
     this.load.image('cutscene-aquaman', 'assets/cutscenes/aquaman.png');
+    this.load.image('cutscene-victory', 'assets/cutscenes/victory.png');
+
+    // --- Title screen art (256x224) ---
+    this.load.image('title', 'assets/backgrounds/title.png');
 
     // --- Minigame backgrounds (256x224, painted scenes) ---
+    // Some of these files may not exist yet (art lands incrementally); the
+    // loaderror handler above logs a warning and every use site falls back
+    // to the original Phaser-graphics look.
     this.load.image('bg-coke-drink', 'assets/backgrounds/bg-coke-drink.png');
     this.load.image('bg-lullaby', 'assets/backgrounds/bg-lullaby.png');
     this.load.image('bg-pipe-smoke', 'assets/backgrounds/bg-pipe-smoke.png');
+    this.load.image('bg-scuba-dive', 'assets/backgrounds/bg-scuba-dive.png');
+    this.load.image('bg-dinner-service', 'assets/backgrounds/bg-dinner-service.png');
+    this.load.image('bg-motorboat', 'assets/backgrounds/bg-motorboat.png');
+    this.load.image('bg-mermaid-shower', 'assets/backgrounds/bg-mermaid-shower.png');
+    this.load.image('bg-mermaid-nap', 'assets/backgrounds/bg-mermaid-nap.png');
 
     // --- Background music ---
     this.load.audio('bgm-overworld', 'assets/audio/bgm-overworld.mp3');

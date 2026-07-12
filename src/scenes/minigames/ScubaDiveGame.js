@@ -48,7 +48,12 @@ export default class ScubaDiveGame extends BaseMinigame {
     this.physics.world.setBounds(0, 0, 256, 224);
 
     // ── Background ────────────────────────────────────────────────
-    this.add.rectangle(128, 112, 256, 224, 0x001a3a).setDepth(0);
+    // Painted underwater scene when the art exists; flat deep-blue fallback.
+    if (this.textures.exists('bg-scuba-dive')) {
+      this.add.image(128, 112, 'bg-scuba-dive').setDepth(0);
+    } else {
+      this.add.rectangle(128, 112, 256, 224, 0x001a3a).setDepth(0);
+    }
 
     // ── Kelp (decorative, swaying) ────────────────────────────────
     this.createKelp();

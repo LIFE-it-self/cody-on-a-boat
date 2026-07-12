@@ -22,7 +22,12 @@ export default class PipeSmoke extends BaseMinigame {
     const cfg = (this.levelConfig && this.levelConfig.config) || {};
     this.required = cfg.puffsRequired || 5;
     this.puffPower = cfg.puffPower || 30;
+    // Minimum spacing between counted puffs — the pipe needs a beat between
+    // draws, so mashing gives fizzles instead of a 1-second win.
+    this.cooldownMs = cfg.puffCooldownMs || 0;
+    this.lastPuffAt = -Infinity;
     const decayRate = cfg.decayPerSec || 25;
+    const initialPower = cfg.initialPower != null ? cfg.initialPower : 100;
 
     // Painted lounge background — falls back to default navy if image is missing.
     if (this.textures.exists('bg-pipe-smoke')) {
@@ -43,7 +48,7 @@ export default class PipeSmoke extends BaseMinigame {
 
     this.powerMeter = new PowerMeter(this, 16, 188, 224, 12, {
       max: 100,
-      initial: 100,
+      initial: initialPower,
       decayPerSec: decayRate,
       label: 'PIPE LIT',
     });
@@ -60,6 +65,23 @@ export default class PipeSmoke extends BaseMinigame {
 
   puff() {
     if (this.state !== 'PLAY') return;
+
+    // Too soon after the last puff — gray fizzle, no power, no count.
+    if (this.time.now - this.lastPuffAt < this.cooldownMs) {
+      const fizzle = this.add.circle(138, 108, 2, 0x808080);
+      this.tweens.add({
+        targets: fizzle,
+        y: 96,
+        alpha: 0,
+        duration: 300,
+        onComplete: () => {
+          if (fizzle && fizzle.active) fizzle.destroy();
+        },
+      });
+      return;
+    }
+    this.lastPuffAt = this.time.now;
+
     this.powerMeter.add(this.puffPower);
     if (this.cache.audio.exists('sfx-puff')) {
       this.sound.play('sfx-puff', { volume: 0.7 });

@@ -1,10 +1,12 @@
 // SequenceGuard — checks that ritual steps are attempted in the correct
 // order (1, 2, 3, 4). Wrong order fires the same 'hurricane-fail' event the
-// failure-threshold path uses, which collapses both fail conditions onto a
-// single UI flow.
+// failure-threshold path uses (CutsceneRouter catches it and plays the fail
+// cutscene).
 //
-// Used by ritual minigames before they start. Session 3 only contains a
-// non-ritual placeholder, so this file is wired but not exercised yet.
+// As of the assessment session, OverworldScene.startMinigameForLevel
+// SOFT-BLOCKS out-of-order ritual attempts with a hint dialog BEFORE this
+// guard runs, so in normal play this never fires — it remains as the last
+// line of defense if a ritual scene is ever launched through another path.
 
 import { EventBus } from './EventBus.js';
 import { GameStateManager } from './GameStateManager.js';

@@ -28,20 +28,22 @@ The game has four acts. Each act has one minigame followed by one ritual step.
 
 | Act | Minigame | Ritual Step |
 |-----|----------|-------------|
-| 1 | **CokeDrink** — Cody drinks a Coke and turns into a werewolf. 8-beat rhythm tap to howl correctly. | **Pipe Smoke** — Tap to puff. Chain 5 puffs without letting it go out. |
-| 2 | **ScubaDive** — Top-down underwater swim. Collect 10 golden K-shaped fish in 30 seconds. Avoid red K-fish. | **Dinner Service** — 3 courses, each with 3 menu options. Pick the absurd Michelin-worthy one each time. |
-| 3 | **Motorboat** — Cody shoves his face into the dashboard and blows. Rapid-tap to keep a power meter above the red zone for 20 seconds. | **Mermaid Shower** — Slide a temperature knob. Mermaids randomly nudge it. Stay in the green zone for 15 seconds. |
-| 4 | **Lullaby** — Rhythm tap along to a mermaid lullaby. | **Mermaid Nap** — Cody falls asleep. Tap to shush 4 noises (seagull, wave, mermaid giggle, etc.) over 20 seconds. |
+| 1 | **CokeDrink** — Cody drinks a Coke and turns into a werewolf. 8-beat rhythm tap to howl correctly (mistimed taps dock a hit). | **Pipe Smoke** — Tap steadily to puff (the pipe needs a beat between puffs). Chain 5 puffs without letting it go out. |
+| 2 | **ScubaDive** — Top-down underwater swim. Collect golden K-shaped fish before time runs out. Avoid red K-fish. | **Dinner Service** — 3 courses, each with 3 menu options. Pick the absurd Michelin-worthy one each time. |
+| 3 | **Motorboat** — Cody shoves his face into the dashboard and blows. Alternate Q/W (or tap L/R) to keep a power meter above empty. | **Mermaid Shower** — Slide a temperature knob. Mermaids randomly nudge it. Accumulate enough time in the green zone. |
+| 4 | **Lullaby** — Rhythm tap along to a mermaid lullaby (mistimed taps dock a hit). | **Mermaid Nap** — Cody falls asleep. Tap to shush 4 noises (seagull, foghorn, wave, parrot); missing 2 wakes him. |
+
+*(Exact counts, timers, and thresholds live in `src/data/levels.js` — that file is the tuning source of truth; this table describes the mechanics.)*
 
 **Total:** 4 minigames + 4 ritual steps = 8 interactive sequences. (Originally 8 minigames in the playbook, trimmed by 3 weak/overlapping ones for focus and feasibility.)
 
 ### Sequence enforcement
 
-The ritual steps must be done in order: **Pipe → Dinner → Shower → Nap**. If the player triggers a ritual step out of order (e.g., walks up to the shower before completing dinner), the game immediately plays the hurricane fail cutscene. The game must communicate the order through NPC dialog and environmental hints, **not** a tutorial popup.
+The ritual steps must be done in order: **Pipe → Dinner → Shower → Nap**. If the player steps on a ritual trigger out of order (e.g., walks up to the shower before completing dinner), the ritual **soft-blocks**: an in-character dialog ("The ritual resists. Dinner comes second.") explains the next move, with no failure and no penalty. *(Changed in the assessment session — the original instant-hurricane rule punished innocent exploration: every room is open from the start and a fatal trigger looked identical to a safe one.)* Ritual triggers are visually distinct in the overworld: a pulsing red `!` marks the ready ritual step, a gray `?` marks rituals that would refuse to start, and a yellow `!` marks safe minigames. The order is also communicated through NPC dialog, Cody's state-aware hints, and the live HUD objective — **not** a tutorial popup.
 
 ### Minigames must precede their ritual step in the same act
 
-Each act's minigame is the gate for that act's ritual step. You can't smoke the pipe until you've completed the Coke/Werewolf rhythm game. You can't eat dinner until you've completed the Scuba dive. Etc. This is enforced by the level registry and `SequenceGuard`.
+Each act's minigame is the gate for that act's ritual step. You can't smoke the pipe until you've completed the Coke/Werewolf rhythm game. You can't eat dinner until you've completed the Scuba dive. Etc. This is enforced in `OverworldScene.startMinigameForLevel` via `Objective.actMinigameDone` — an un-gated ritual soft-blocks with a hint dialog pointing at the missing minigame.
 
 ---
 
@@ -51,7 +53,7 @@ Each act's minigame is the gate for that act's ritual step. You can't smoke the 
 - Each minigame loss adds +1.
 - Ritual steps cannot be "lost" the same way — they either complete or, if abandoned, can be retried. (Tuning detail.)
 - At **failureCount === 5**, the hurricane fail cutscene plays. (Higher than the playbook's 3 because this is a casual game for friends; we want it forgiving.)
-- A wrong-order ritual attempt is an instant fail (no warning, no "are you sure" — that's the joke).
+- A wrong-order ritual attempt **soft-blocks** with an in-character dialog — no fail, no reset. The hurricane-by-failure-count path is the only fail state in normal play. (Changed in the assessment session; the instant-fail joke read as unfair in practice because the fail wipes the whole run.)
 
 ---
 
