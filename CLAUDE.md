@@ -81,8 +81,8 @@ All assets live under `public/assets/`. BootScene preloads everything; missing f
 **Tilesets** (`tilesets/`): generic floor/wall/door.png plus per-room variants `<roomId>_{floor,wall,door}.png` for main-deck/bar/galley/bridge/cabin-corridor — `renderRoomTiles()` prefers the per-room key. The per-room tiles are the Claude Design pack (each room visually distinct now). boat-tileset.png is an unused source image (never loaded).
 **Cutscenes** (`cutscenes/`): hurricane.png, aquaman.png, victory.png (1152x896, drawn full-screen). All on disk.
 **Backgrounds** (`backgrounds/`): bg-coke-drink.png, bg-lullaby.png, bg-pipe-smoke.png (Session 8 originals) plus bg-scuba-dive, bg-dinner-service, bg-motorboat, bg-mermaid-shower, bg-mermaid-nap, and title.png (Claude Design pack) — all 256x224, all on disk. The sprite/bg exists-check fallbacks remain in every scene as a safety net.
-**BGM** (`audio/`): bgm-overworld.mp3, bgm-minigame.mp3, bgm-underwater.mp3, bgm-victory.mp3, bgm-fail.mp3
-**SFX** (`audio/`): sfx-howl.wav, sfx-splash.wav, sfx-puff.wav, sfx-ding.wav, sfx-buzz.wav, sfx-hurricane.wav
+**BGM** (`audio/`): bgm-overworld.mp3, bgm-minigame.mp3, bgm-underwater.mp3, bgm-victory.mp3, bgm-fail.mp3 — mono ~80kbps.
+**SFX** (`audio/`): sfx-howl.mp3, sfx-splash.mp3, sfx-puff.mp3, sfx-ding.mp3, sfx-buzz.mp3, sfx-hurricane.mp3 — mono ~96kbps (converted from the original WAVs in the Session 10 audio pass). All audio is MP3 (not OGG) for iOS Safari compatibility on the mobile-first target. Total audio payload ~7MB (was ~21MB).
 
 ## Required reading at the start of every session
 - This file (CLAUDE.md)

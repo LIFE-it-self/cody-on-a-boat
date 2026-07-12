@@ -89,13 +89,13 @@ export default class BootScene extends Phaser.Scene {
     this.load.audio('bgm-victory', 'assets/audio/bgm-victory.mp3');
     this.load.audio('bgm-fail', 'assets/audio/bgm-fail.mp3');
 
-    // --- Sound effects ---
-    this.load.audio('sfx-howl', 'assets/audio/sfx-howl.wav');
-    this.load.audio('sfx-splash', 'assets/audio/sfx-splash.wav');
-    this.load.audio('sfx-puff', 'assets/audio/sfx-puff.wav');
-    this.load.audio('sfx-ding', 'assets/audio/sfx-ding.wav');
-    this.load.audio('sfx-buzz', 'assets/audio/sfx-buzz.wav');
-    this.load.audio('sfx-hurricane', 'assets/audio/sfx-hurricane.wav');
+    // --- Sound effects (compressed to mono MP3 from the original WAVs) ---
+    this.load.audio('sfx-howl', 'assets/audio/sfx-howl.mp3');
+    this.load.audio('sfx-splash', 'assets/audio/sfx-splash.mp3');
+    this.load.audio('sfx-puff', 'assets/audio/sfx-puff.mp3');
+    this.load.audio('sfx-ding', 'assets/audio/sfx-ding.mp3');
+    this.load.audio('sfx-buzz', 'assets/audio/sfx-buzz.mp3');
+    this.load.audio('sfx-hurricane', 'assets/audio/sfx-hurricane.mp3');
   }
 
   create() {
