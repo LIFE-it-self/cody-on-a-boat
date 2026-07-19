@@ -36,41 +36,13 @@
       #game-container {
         touch-action: none;
       }
-
-      /* Landscape hint — shown on phone-width screens in portrait, tap to dismiss */
-      #rotate-hint {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        background: rgba(10, 14, 39, 0.92);
-        color: #fff;
-        font-family: monospace;
-        font-size: 18px;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: 12px;
-        cursor: pointer;
-      }
-      #rotate-hint .dismiss {
-        font-size: 11px;
-        color: #888;
-      }
-      @media (orientation: portrait) and (max-width: 768px) {
-        #rotate-hint:not(.hidden) {
-          display: flex;
-        }
-      }
+      /* No rotate-to-landscape hint: the game is nearly square (256x224),
+         so portrait width-fit is already the best a phone can do — rotating
+         doesn't make it bigger, it just adds browser chrome. */
     </style>
-    <script type="module" crossorigin src="./assets/index-BWi09lgx.js"></script>
+    <script type="module" crossorigin src="./assets/index-BA5NnnJU.js"></script>
   </head>
   <body>
-    <div id="rotate-hint" onclick="this.classList.add('hidden')">
-      <p>&#x21BB; Rotate to landscape for the best experience</p>
-      <p class="dismiss">Tap to dismiss</p>
-    </div>
     <div id="game-container"></div>
     <script>
       // Register the offline-cache service worker in production only. On
