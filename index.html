@@ -64,7 +64,7 @@
         }
       }
     </style>
-    <script type="module" crossorigin src="./assets/index-DI4B4boo.js"></script>
+    <script type="module" crossorigin src="./assets/index-BnWe7hst.js"></script>
   </head>
   <body>
     <div id="rotate-hint" onclick="this.classList.add('hidden')">
@@ -73,10 +73,19 @@
     </div>
     <div id="game-container"></div>
     <script>
-      if ('serviceWorker' in navigator) {
+      // Register the offline-cache service worker in production only. On
+      // localhost the cache-first SW serves stale Vite modules across edits,
+      // silently masking code changes during development.
+      const isLocalDev = ['localhost', '127.0.0.1'].includes(location.hostname);
+      if ('serviceWorker' in navigator && !isLocalDev) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').catch(() => {});
         });
+      }
+      if ('serviceWorker' in navigator && isLocalDev) {
+        // Clean up any SW a previous dev session left behind.
+        navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+        if (window.caches) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k)));
       }
     </script>
   </body>
