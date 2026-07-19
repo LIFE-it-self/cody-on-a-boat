@@ -1,10 +1,10 @@
-# Galaxy Boat — Session 4: Act 1 (Werewolf Howl + Pipe Ritual)
+# Cody On A Boat — Session 4: Act 1 (Werewolf Howl + Pipe Ritual)
 
-> **For the human (you):** This is Session 4 of 10. Open a fresh Claude Code chat in your `galaxy-boat` directory. Copy everything below the `---` line and paste as your first message.
+> **For the human (you):** This is Session 4 of 10. Open a fresh Claude Code chat in your `cody-on-a-boat` directory. Copy everything below the `---` line and paste as your first message.
 
 ---
 
-You are helping me build **Galaxy Boat**. This is **Session 4 of 10**. I am not a software engineer — be explicit, ask before running commands or making bulk changes.
+You are helping me build **Cody On A Boat**. This is **Session 4 of 10**. I am not a software engineer — be explicit, ask before running commands or making bulk changes.
 
 ## Goal of this session
 

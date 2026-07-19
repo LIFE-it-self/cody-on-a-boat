@@ -1,6 +1,6 @@
-# Galaxy Boat — Session 8: Art + Audio Pass
+# Cody On A Boat — Session 8: Art + Audio Pass
 
-> **For the human (you):** This is Session 8 of 10. **Pre-work for this session:** before opening Claude Code, do the asset gathering listed in the "Pre-session asset gathering" block below. It will take 30–60 minutes and you don't need Claude Code for it. Then open a fresh Claude Code chat in your `galaxy-boat` directory and paste everything below the `---` line.
+> **For the human (you):** This is Session 8 of 10. **Pre-work for this session:** before opening Claude Code, do the asset gathering listed in the "Pre-session asset gathering" block below. It will take 30–60 minutes and you don't need Claude Code for it. Then open a fresh Claude Code chat in your `cody-on-a-boat` directory and paste everything below the `---` line.
 
 ---
 
@@ -8,7 +8,7 @@
 
 You need a small pile of free art and audio. Don't make Claude Code wait while you go hunting — gather these into a temporary folder on your desktop first, then we'll drop them into the project together.
 
-**Where to put them while gathering:** make a folder on your Desktop named `galaxy-boat-assets-incoming`. Put everything in there.
+**Where to put them while gathering:** make a folder on your Desktop named `cody-on-a-boat-assets-incoming`. Put everything in there.
 
 ### Sprites
 - **Captain Chowder John (16×16):** generate 1 sprite at [pixellab.ai](https://pixellab.ai) (paid, ~$5/mo subscription) with a prompt like "16x16 pixel art of a chubby pirate captain with a big white beard, blue coat, navy hat, top-down view, 4-direction walk cycle". OR draw it yourself in [Piskel](https://www.piskelapp.com/) (free, browser).
@@ -43,16 +43,16 @@ Save them as `hurricane.png` and `aquaman.png`.
 ### Checklist before opening Claude Code
 
 You should have:
-- [ ] `~/Desktop/galaxy-boat-assets-incoming/sprites/` with: captain.png, cody.png, cody-werewolf.png, cody-aquaman.png, mermaid-1.png, mermaid-2.png, k-fish-gold.png, k-fish-red.png
-- [ ] `~/Desktop/galaxy-boat-assets-incoming/tilesets/` with: boat-tileset.png (or several PNGs)
-- [ ] `~/Desktop/galaxy-boat-assets-incoming/cutscenes/` with: hurricane.png, aquaman.png
-- [ ] `~/Desktop/galaxy-boat-assets-incoming/audio/` with: bgm-overworld.mp3, bgm-minigame.mp3, bgm-underwater.mp3, bgm-victory.mp3, bgm-fail.mp3, sfx-howl.wav, sfx-splash.wav, sfx-puff.wav, sfx-ding.wav, sfx-buzz.wav, sfx-hurricane.wav
+- [ ] `~/Desktop/cody-on-a-boat-assets-incoming/sprites/` with: captain.png, cody.png, cody-werewolf.png, cody-aquaman.png, mermaid-1.png, mermaid-2.png, k-fish-gold.png, k-fish-red.png
+- [ ] `~/Desktop/cody-on-a-boat-assets-incoming/tilesets/` with: boat-tileset.png (or several PNGs)
+- [ ] `~/Desktop/cody-on-a-boat-assets-incoming/cutscenes/` with: hurricane.png, aquaman.png
+- [ ] `~/Desktop/cody-on-a-boat-assets-incoming/audio/` with: bgm-overworld.mp3, bgm-minigame.mp3, bgm-underwater.mp3, bgm-victory.mp3, bgm-fail.mp3, sfx-howl.wav, sfx-splash.wav, sfx-puff.wav, sfx-ding.wav, sfx-buzz.wav, sfx-hurricane.wav
 
 If you can't get all of these, do what you can. The session will adapt — anything missing stays as a placeholder.
 
 ---
 
-You are helping me build **Galaxy Boat**. This is **Session 8 of 10**. The game is functionally complete after Session 7. This session is the **art and audio pass**: replace placeholder rectangles with real sprites, drop in real cutscene illustrations, add background music and sound effects, and add NPC hint dialog scattered through the boat. **No new mechanics in this session.**
+You are helping me build **Cody On A Boat**. This is **Session 8 of 10**. The game is functionally complete after Session 7. This session is the **art and audio pass**: replace placeholder rectangles with real sprites, drop in real cutscene illustrations, add background music and sound effects, and add NPC hint dialog scattered through the boat. **No new mechanics in this session.**
 
 I am not a software engineer — be explicit, ask permission for file operations and bulk changes.
 
@@ -101,7 +101,7 @@ git status
 git pull
 ```
 
-Then ask me to confirm the assets are in `~/Desktop/galaxy-boat-assets-incoming/`. List the contents. Then **walk me through copying the files into the project's `public/assets/` folders** with explicit `cp` commands. Don't copy in bulk — copy a few at a time and verify after each.
+Then ask me to confirm the assets are in `~/Desktop/cody-on-a-boat-assets-incoming/`. List the contents. Then **walk me through copying the files into the project's `public/assets/` folders** with explicit `cp` commands. Don't copy in bulk — copy a few at a time and verify after each.
 
 Final destination structure:
 

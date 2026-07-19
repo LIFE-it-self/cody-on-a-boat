@@ -190,7 +190,7 @@ export default class CutsceneScene extends Phaser.Scene {
       'CODY GOT OFF THE BOAT.',
       '',
       '',
-      'A GALAXY BOAT PRODUCTION',
+      'A CODY ON A BOAT PRODUCTION',
       '',
       'Captain Chowder John ... You',
       'Cody ... Cody',

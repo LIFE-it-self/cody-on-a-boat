@@ -1,4 +1,4 @@
-// Shared constants for Galaxy Boat. Tile sizes, colors, and tile-type symbols
+// Shared constants for Cody On A Boat. Tile sizes, colors, and tile-type symbols
 // live here so other files can import them by name instead of duplicating
 // magic numbers. Phaser uses 0xRRGGBB number literals for colors (not strings).
 

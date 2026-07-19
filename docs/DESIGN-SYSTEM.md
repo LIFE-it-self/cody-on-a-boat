@@ -1,6 +1,6 @@
-# Galaxy Boat — Design System
+# Cody On A Boat — Design System
 
-A single-doc design system for **Galaxy Boat**, a browser-based pixel-art mini-RPG built in Phaser 3. This document describes the aesthetic identity and component vocabulary of the game as it exists today (post-Session 8, art-and-audio pass complete). Upload this file into Claude Design as context, and use it when designing new characters, rooms, minigames, UI, or cutscenes for the project.
+A single-doc design system for **Cody On A Boat**, a browser-based pixel-art mini-RPG built in Phaser 3. This document describes the aesthetic identity and component vocabulary of the game as it exists today (post-Session 8, art-and-audio pass complete). Upload this file into Claude Design as context, and use it when designing new characters, rooms, minigames, UI, or cutscenes for the project.
 
 The structure runs **identity → system → application → principles**. The early sections tell you *what the game is*; the middle sections give you the *palette and components* to work with; the later sections show you *how features are composed* and *which principles guide new work*.
 
@@ -8,7 +8,7 @@ The structure runs **identity → system → application → principles**. The e
 
 ## 1. Product & premise
 
-You play **Captain Chowder John**. Your friend **Cody** is stuck on the Galaxy Boat, and the only way off is a four-step ritual that must be done in order:
+You play **Captain Chowder John**. Your friend **Cody** is stuck on the boat, and the only way off is a four-step ritual that must be done in order:
 
 1. **Smoke a pipe**
 2. **Eat a Michelin-starred dinner**
@@ -21,7 +21,7 @@ Between ritual steps, minigames keep Cody occupied — drinking a Coke (which tu
 
 ## 2. Tone & voice
 
-Galaxy Boat is **absurdist deadpan**. The premise is ridiculous on every axis — the ritual, the fail state, the character names — and the game commits to it fully. Nothing is winked at, nothing is explained. The humor is in the specificity and the refusal to acknowledge how weird any of it is.
+Cody On A Boat is **absurdist deadpan**. The premise is ridiculous on every axis — the ritual, the fail state, the character names — and the game commits to it fully. Nothing is winked at, nothing is explained. The humor is in the specificity and the refusal to acknowledge how weird any of it is.
 
 Concrete anchors:
 
@@ -134,7 +134,7 @@ Rooms share the palette and tile shapes; differentiation is by floor tone and do
 
 ## 5. UI widget library
 
-Galaxy Boat uses **two reusable plain-JS widgets** (not Phaser scenes) plus a small set of shared primitives. New minigames should reach for these widgets before inventing new ones.
+Cody On A Boat uses **two reusable plain-JS widgets** (not Phaser scenes) plus a small set of shared primitives. New minigames should reach for these widgets before inventing new ones.
 
 ### RhythmBar (`src/ui/RhythmBar.js`)
 

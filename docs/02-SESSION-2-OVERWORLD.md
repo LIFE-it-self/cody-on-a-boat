@@ -1,10 +1,10 @@
-# Galaxy Boat — Session 2: Overworld + Rooms
+# Cody On A Boat — Session 2: Overworld + Rooms
 
-> **For the human (you):** This is Session 2 of 10. Open a fresh Claude Code chat in your `galaxy-boat` directory (`cd ~/code/galaxy-boat && claude`). Copy everything below the `---` line and paste as your first message. Approve commands as Claude Code asks.
+> **For the human (you):** This is Session 2 of 10. Open a fresh Claude Code chat in your `cody-on-a-boat` directory (`cd ~/code/cody-on-a-boat && claude`). Copy everything below the `---` line and paste as your first message. Approve commands as Claude Code asks.
 
 ---
 
-You are helping me build **Galaxy Boat**, a browser-based pixel-art mini-RPG in Phaser 3. This is **Session 2 of 10**. I am not a software engineer — please be explicit about every step, explain what each command and file does, and ask my permission before doing anything that touches my system, makes a commit, or pushes to GitHub.
+You are helping me build **Cody On A Boat**, a browser-based pixel-art mini-RPG in Phaser 3. This is **Session 2 of 10**. I am not a software engineer — please be explicit about every step, explain what each command and file does, and ask my permission before doing anything that touches my system, makes a commit, or pushes to GitHub.
 
 ## Goal of this session
 

@@ -1,10 +1,10 @@
-# Galaxy Boat — Session 9: Mobile + Cross-Browser Polish
+# Cody On A Boat — Session 9: Mobile + Cross-Browser Polish
 
-> **For the human (you):** This is Session 9 of 10. **Pre-session prep:** before opening Claude Code, make sure you have your phone handy AND know how to find your computer's local IP address (so the phone can connect to the dev server). Open a fresh Claude Code chat in your `galaxy-boat` directory and paste everything below the `---` line.
+> **For the human (you):** This is Session 9 of 10. **Pre-session prep:** before opening Claude Code, make sure you have your phone handy AND know how to find your computer's local IP address (so the phone can connect to the dev server). Open a fresh Claude Code chat in your `cody-on-a-boat` directory and paste everything below the `---` line.
 
 ---
 
-You are helping me build **Galaxy Boat**. This is **Session 9 of 10**. The game is functionally complete and visually polished after Session 8. This session is about making it **work well on a phone** and **across browsers**, plus a PWA manifest for "Add to Home Screen", plus difficulty tuning.
+You are helping me build **Cody On A Boat**. This is **Session 9 of 10**. The game is functionally complete and visually polished after Session 8. This session is about making it **work well on a phone** and **across browsers**, plus a PWA manifest for "Add to Home Screen", plus difficulty tuning.
 
 I am not a software engineer — be explicit, ask permission, no surprises.
 
@@ -153,8 +153,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['assets/**/*'],
       manifest: {
-        name: 'Galaxy Boat',
-        short_name: 'GalaxyBoat',
+        name: 'Cody On A Boat',
+        short_name: 'CodyBoat',
         description: 'Get Cody off the boat.',
         theme_color: '#0a0e27',
         background_color: '#0a0e27',

@@ -1,15 +1,15 @@
-# Galaxy Boat — Session 1: Scaffold + Deploy
+# Cody On A Boat — Session 1: Scaffold + Deploy
 
 > **For the human (you):** This is Session 1 of 10. Before starting, make sure you finished the **Pre-Session-1 setup** in `00-OVERVIEW.md` (Node installed, GitHub repo cloned, Claude Code installed). Then:
 >
-> 1. Open Terminal, run `cd ~/code/galaxy-boat`, then `claude` to start a Claude Code session in your project folder.
-> 2. Copy **everything below the next `---` line** (Cmd+A inside this file then Cmd+C usually works, or just select from the line "You are helping me build Galaxy Boat" down to the end of file).
+> 1. Open Terminal, run `cd ~/code/cody-on-a-boat`, then `claude` to start a Claude Code session in your project folder.
+> 2. Copy **everything below the next `---` line** (Cmd+A inside this file then Cmd+C usually works, or just select from the line "You are helping me build Cody On A Boat" down to the end of file).
 > 3. Paste it into the Claude Code chat as your first message and send.
 > 4. Follow along, approving Claude Code's commands and edits. Read what's happening so you understand the project as it grows.
 
 ---
 
-You are helping me build **Galaxy Boat**, a browser-based pixel-art mini-RPG in Phaser 3. This is **Session 1 of 10**. I am not a software engineer — please be explicit about every step, explain what each command and file does, and ask my permission before doing anything that touches my system, makes a commit, or pushes to GitHub.
+You are helping me build **Cody On A Boat**, a browser-based pixel-art mini-RPG in Phaser 3. This is **Session 1 of 10**. I am not a software engineer — please be explicit about every step, explain what each command and file does, and ask my permission before doing anything that touches my system, makes a commit, or pushes to GitHub.
 
 The complete game design lives in `docs/GAME-DESIGN.md` (which doesn't exist yet — I'll be creating it in this session). The premise: player is Captain Chowder John, mission is to get Cody off the boat by completing a 4-step ritual (pipe → dinner → shower → nap) plus minigames in between. Failure or wrong order = Cody becomes a hurricane and sinks Florida. Tone is absurd inside-joke comedy. Distribution is browser-based, free, shared with friends.
 
@@ -83,7 +83,7 @@ Either way, the result should be a project where `npm run dev` boots a Phaser 3 
 The final structure for this session should look like this:
 
 ```
-galaxy-boat/
+cody-on-a-boat/
 ├── .git/
 ├── .gitignore               # ignore node_modules, dist, .DS_Store
 ├── README.md                # already exists (from GitHub)
@@ -127,7 +127,7 @@ Create or modify `src/index.js` to contain a Phaser game config:
 - The active scene at startup is `BootScene`
 
 Modify `index.html` so that:
-- `<title>` is `Galaxy Boat`
+- `<title>` is `Cody On A Boat`
 - The body has a single canvas container `<div id="game-container"></div>` (Phaser will mount the canvas inside it)
 - A `<style>` block sets `body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; } canvas { image-rendering: pixelated; image-rendering: crisp-edges; }`
 - The `<script type="module" src="/src/index.js"></script>` is in the body
@@ -147,7 +147,7 @@ Create `src/scenes/MainMenuScene.js`:
 
 - Key: `'MainMenuScene'`.
 - In `create()`, draw:
-  - A title: `"GALAXY BOAT"` in pixel-art-style text (use Phaser's bitmap text fallback or `add.text` with a sensible default font, large size).
+  - A title: `"CODY ON A BOAT"` in pixel-art-style text (use Phaser's bitmap text fallback or `add.text` with a sensible default font, large size).
   - A subtitle: `"Get Cody off the boat."`
   - A "Start" button — for now this is just a `Phaser.GameObjects.Text` with a rectangle background that does NOTHING when clicked except print to the console: `console.log('Start clicked — gameplay coming in Session 2')`. We'll wire it up later.
 - The button should respond to BOTH `pointerdown` (click and touch) AND the `Enter` key. **Mobile-first input from day one** — add `setInteractive()` and a keyboard handler.
@@ -158,14 +158,14 @@ Run `npm run dev`. It should print a localhost URL (probably `http://localhost:5
 
 - The canvas appears centered, scaled up from 256×224 with crisp pixels (no blur).
 - The loading bar shows briefly.
-- The Main Menu appears with "GALAXY BOAT", subtitle, and a clickable "Start" button.
+- The Main Menu appears with "CODY ON A BOAT", subtitle, and a clickable "Start" button.
 - Clicking Start logs the message in the browser's developer console (Cmd+Option+I, Console tab).
 
 If anything is wrong, pause and tell me — don't try to "improve" things.
 
 ### Task 8: Configure for GitHub Pages deployment
 
-GitHub Pages serves the site at `https://USERNAME.github.io/galaxy-boat/`. The `/galaxy-boat/` part means Vite needs to know about the base path, otherwise asset URLs will be wrong.
+GitHub Pages serves the site at `https://USERNAME.github.io/cody-on-a-boat/`. The `/cody-on-a-boat/` part means Vite needs to know about the base path, otherwise asset URLs will be wrong.
 
 1. Open `vite.config.js` (create it if missing). Set:
    ```javascript
@@ -209,20 +209,20 @@ GitHub Pages serves the site at `https://USERNAME.github.io/galaxy-boat/`. The `
 5. Push to main: `git push` — **wait for my OK**.
 6. Build and deploy: `npm run deploy` — **wait for my OK**. This builds the project and pushes the `dist/` folder to a `gh-pages` branch on GitHub.
 7. Tell me to go to my GitHub repo, click **Settings → Pages**, and confirm that the source is set to "Deploy from a branch" and the branch is `gh-pages` (root). If it's not configured, walk me through it.
-8. Wait ~1 minute, then tell me to visit `https://YOUR-USERNAME.github.io/galaxy-boat/` in a browser.
+8. Wait ~1 minute, then tell me to visit `https://YOUR-USERNAME.github.io/cody-on-a-boat/` in a browser.
 
 ## Verification
 
 Before we can call this session complete, **all** of these must be true:
 
-- [ ] `npm run dev` shows the Main Menu in Chrome at `localhost:5173` with "GALAXY BOAT" centered.
+- [ ] `npm run dev` shows the Main Menu in Chrome at `localhost:5173` with "CODY ON A BOAT" centered.
 - [ ] The pixel rendering is crisp (no blur). Resize the window — the game should scale with integer multiples and stay sharp.
 - [ ] Clicking the Start button logs `"Start clicked — gameplay coming in Session 2"` to the browser console.
 - [ ] Pressing Enter on the menu logs the same thing.
 - [ ] `git status` shows a clean working tree.
 - [ ] `git log --oneline` shows the Session 1 commit.
 - [ ] The gh-pages branch exists on GitHub (`git branch -a` shows `remotes/origin/gh-pages`).
-- [ ] `https://YOUR-USERNAME.github.io/galaxy-boat/` loads in Chrome and shows the same Main Menu I see locally.
+- [ ] `https://YOUR-USERNAME.github.io/cody-on-a-boat/` loads in Chrome and shows the same Main Menu I see locally.
 - [ ] `CLAUDE.md` exists in the project root and contains the content from the template.
 - [ ] `docs/PHASE_LOG.md` exists.
 
@@ -235,7 +235,7 @@ If any of these fail, we are NOT done. Diagnose the failure together and fix it 
 In the `## Current phase` section, replace the placeholder with:
 
 ```
-Session 1 complete. Phaser 3 + Vite project scaffolded. Boot and MainMenu scenes work. Deployed to https://YOUR-USERNAME.github.io/galaxy-boat/. Next: Session 2 — overworld with 4 boat rooms and player movement.
+Session 1 complete. Phaser 3 + Vite project scaffolded. Boot and MainMenu scenes work. Deployed to https://YOUR-USERNAME.github.io/cody-on-a-boat/. Next: Session 2 — overworld with 4 boat rooms and player movement.
 ```
 
 ### 2. Update `docs/PHASE_LOG.md`
@@ -279,7 +279,7 @@ Open the browser dev console (Cmd+Option+I in Chrome). The error is almost alway
 You probably haven't pushed your `main` branch yet. Run `git push -u origin main` first. Then try `npm run deploy` again.
 
 **GitHub Pages URL shows a 404.**
-Wait 2–3 minutes — first deploy can be slow. Then check Settings → Pages and confirm the branch is `gh-pages`. If still 404, try visiting `https://YOUR-USERNAME.github.io/galaxy-boat/index.html` directly.
+Wait 2–3 minutes — first deploy can be slow. Then check Settings → Pages and confirm the branch is `gh-pages`. If still 404, try visiting `https://YOUR-USERNAME.github.io/cody-on-a-boat/index.html` directly.
 
 **Pixels are blurry on the deployed site but crisp locally.**
 Verify the `image-rendering: pixelated` CSS made it into `index.html`, and verify `vite.config.js` has `base: './'`.

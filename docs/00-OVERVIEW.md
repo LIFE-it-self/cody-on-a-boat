@@ -1,12 +1,12 @@
-# Galaxy Boat — Build Overview
+# Cody On A Boat — Build Overview
 
-**Read this file first.** It explains what Galaxy Boat is, what these documents are, and how to use them.
+**Read this file first.** It explains what Cody On A Boat is, what these documents are, and how to use them.
 
 ---
 
-## What Galaxy Boat is
+## What Cody On A Boat is
 
-Galaxy Boat is a browser-based pixel-art mini-RPG. You play as **Captain Chowder John**. Your job: get **Cody** off the Galaxy Boat by guiding him through a four-step ritual — **smoke a pipe → eat a Michelin-starred dinner → shower with mermaids → nap with mermaids** — in that exact order. Between ritual steps you complete short minigames (drink-a-coke werewolf rhythm, K-fish scuba dive, motorboat face-blowing, mermaid lullaby). Get the order wrong or fail too many minigames and Cody transforms into a hurricane that sinks Florida; the credits roll over Cody on a coral throne ruling the new merfolk citizens of the deep.
+Cody On A Boat is a browser-based pixel-art mini-RPG. You play as **Captain Chowder John**. Your job: get **Cody** off the boat by guiding him through a four-step ritual — **smoke a pipe → eat a Michelin-starred dinner → shower with mermaids → nap with mermaids** — in that exact order. Between ritual steps you complete short minigames (drink-a-coke werewolf rhythm, K-fish scuba dive, motorboat face-blowing, mermaid lullaby). Get the order wrong or fail too many minigames and Cody transforms into a hurricane that sinks Florida; the credits roll over Cody on a coral throne ruling the new merfolk citizens of the deep.
 
 It is an absurd inside joke for the developer's friend group. It is **not** a commercial product. It runs in a browser on desktop and phone, gets shared as a link or a single HTML file, and a full playthrough takes 15–30 minutes.
 
@@ -41,7 +41,7 @@ docs/
 For each session:
 
 1. **Open the next session file** (start with `01-SESSION-1-SCAFFOLD.md`).
-2. **Open Claude Code** in your `galaxy-boat` project directory (`cd ~/code/galaxy-boat && claude` in a terminal).
+2. **Open Claude Code** in your `cody-on-a-boat` project directory (`cd ~/code/cody-on-a-boat && claude` in a terminal).
 3. **Copy the entire session file** (Cmd+A, Cmd+C).
 4. **Paste it into Claude Code** as your first message in the new chat.
 5. Claude Code will read the instructions and walk you through every step — running terminal commands, creating files, asking your permission for changes.
@@ -88,11 +88,11 @@ Download from [google.com/chrome](https://www.google.com/chrome/) if you don't a
 
 - Sign up at [github.com](https://github.com) if you don't have an account.
 - Click **New repository** (the green button on the home page after signing in).
-- Name it `galaxy-boat`.
+- Name it `cody-on-a-boat`.
 - Make it **Public** (required for the free version of GitHub Pages hosting).
 - Check the box that says **Add a README file**.
 - Click **Create repository**.
-- On the new repo's page, click the green **<> Code** button → copy the HTTPS URL (looks like `https://github.com/yourname/galaxy-boat.git`).
+- On the new repo's page, click the green **<> Code** button → copy the HTTPS URL (looks like `https://github.com/yourname/cody-on-a-boat.git`).
 
 ### 5. Clone the empty repo to your computer
 
@@ -101,8 +101,8 @@ In Terminal:
 ```bash
 mkdir -p ~/code
 cd ~/code
-git clone https://github.com/YOUR-USERNAME/galaxy-boat.git
-cd galaxy-boat
+git clone https://github.com/YOUR-USERNAME/cody-on-a-boat.git
+cd cody-on-a-boat
 ```
 
 Replace `YOUR-USERNAME` with your actual GitHub username.
@@ -112,7 +112,7 @@ Replace `YOUR-USERNAME` with your actual GitHub username.
 Follow the Claude Code installation instructions for your OS. Once installed, you can start a session inside the project with:
 
 ```bash
-cd ~/code/galaxy-boat
+cd ~/code/cody-on-a-boat
 claude
 ```
 
@@ -140,7 +140,7 @@ You're now ready for Session 1.
 ## Conventions used in the session files
 
 - `bash` code blocks contain terminal commands. Paste them into your terminal one at a time unless told otherwise.
-- File paths look like `src/scenes/MainMenuScene.js`. They are relative to your `galaxy-boat` project root.
+- File paths look like `src/scenes/MainMenuScene.js`. They are relative to your `cody-on-a-boat` project root.
 - "**You**" means the human (you reading this). "**Claude Code**" means the AI assistant in the chat. The session files are addressed to Claude Code — Claude Code will translate to actions and ask you for input when needed.
 - Checklists like `- [ ] thing` are things you, the human, need to verify with your eyes (open the browser, click X, see Y).
 
@@ -160,7 +160,7 @@ Things will sometimes break. Here's how to handle it:
 
 ### "The dev server (`npm run dev`) won't start"
 
-1. Make sure you're in the `galaxy-boat` directory: `pwd` should end in `galaxy-boat`.
+1. Make sure you're in the `cody-on-a-boat` directory: `pwd` should end in `cody-on-a-boat`.
 2. Try `npm install` to make sure all libraries are downloaded.
 3. Read the error message — usually it tells you which file has a syntax error.
 4. Paste the error into Claude Code and ask for help.

@@ -13,7 +13,7 @@ try {
   // not a git checkout — timestamp alone still guarantees uniqueness
 }
 
-const stamp = `galaxy-boat-${hash}-${Date.now()}`;
+const stamp = `cody-on-a-boat-${hash}-${Date.now()}`;
 const src = readFileSync(SW_PATH, 'utf8');
 const out = src.replace(
   /const CACHE_VERSION = '[^']*';/,

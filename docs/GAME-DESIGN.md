@@ -1,4 +1,4 @@
-# Galaxy Boat — Game Design (Source of Truth)
+# Cody On A Boat — Game Design (Source of Truth)
 
 This is the condensed design document. Every Claude Code session reads this. If anything in a session file contradicts this document, **this document wins**.
 
@@ -6,7 +6,7 @@ This is the condensed design document. Every Claude Code session reads this. If 
 
 ## 1. The pitch
 
-You are **Captain Chowder John**. Your friend **Cody** is stuck on the Galaxy Boat. The only way off is a four-step ritual that must be done in order:
+You are **Captain Chowder John**. Your friend **Cody** is stuck on the boat. The only way off is a four-step ritual that must be done in order:
 
 1. **Smoke a pipe**
 2. **Eat a Michelin-starred dinner**
@@ -195,9 +195,9 @@ Adding a level = new entry here + new scene file. No changes to `BaseMinigame` o
 
 The game ships in **three formats** (built in Session 10):
 
-1. **GitHub Pages** — `https://YOUR-USERNAME.github.io/galaxy-boat/`. Free, persistent URL. Main share link.
+1. **GitHub Pages** — `https://YOUR-USERNAME.github.io/cody-on-a-boat/`. Free, persistent URL. Main share link.
 2. **itch.io** — uploaded as an HTML5 game. Has a nicer landing page and a comments section.
-3. **Single HTML file** — `galaxy-boat.html`, all assets inlined. Can be emailed, AirDropped, or sent in Discord. Works offline.
+3. **Single HTML file** — `cody-on-a-boat.html`, all assets inlined. Can be emailed, AirDropped, or sent in Discord. Works offline.
 
 A QR code pointing to the GitHub Pages URL is generated for easy phone sharing.
 

@@ -6,7 +6,7 @@ The block below — between the `===` lines — is the actual content to copy in
 
 ```
 ==========================================================================
-# Galaxy Boat — Phase Log
+# Cody On A Boat — Phase Log
 
 This file tracks the build session by session. Add a new row to the table at the end of every session.
 

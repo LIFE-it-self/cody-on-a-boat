@@ -20,7 +20,7 @@ export default class MainMenuScene extends Phaser.Scene {
     const strokeStyle = hasArt ? { stroke: '#000000', strokeThickness: 4 } : {};
 
     // Title
-    this.add.text(w / 2, 60, 'GALAXY BOAT', {
+    this.add.text(w / 2, 60, 'CODY ON A BOAT', {
       font: 'bold 24px monospace',
       color: '#ffffff',
       ...strokeStyle,

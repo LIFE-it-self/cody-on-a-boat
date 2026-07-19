@@ -1,5 +1,5 @@
 // BaseMinigame — abstract base class for every minigame and ritual step
-// in Galaxy Boat. Subclasses override setupGame() and call this.win() or
+// in Cody On A Boat. Subclasses override setupGame() and call this.win() or
 // this.lose() from inside.
 //
 // IMPORTANT: This file is the contract. It is NOT modified again in any

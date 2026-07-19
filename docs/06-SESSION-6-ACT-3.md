@@ -1,10 +1,10 @@
-# Galaxy Boat — Session 6: Act 3 (Motorboat + Mermaid Shower)
+# Cody On A Boat — Session 6: Act 3 (Motorboat + Mermaid Shower)
 
-> **For the human (you):** This is Session 6 of 10. Open a fresh Claude Code chat in your `galaxy-boat` directory. Copy everything below the `---` line and paste as your first message.
+> **For the human (you):** This is Session 6 of 10. Open a fresh Claude Code chat in your `cody-on-a-boat` directory. Copy everything below the `---` line and paste as your first message.
 
 ---
 
-You are helping me build **Galaxy Boat**. This is **Session 6 of 10**. I am not a software engineer — be explicit, ask permission, no surprises.
+You are helping me build **Cody On A Boat**. This is **Session 6 of 10**. I am not a software engineer — be explicit, ask permission, no surprises.
 
 ## Goal of this session
 

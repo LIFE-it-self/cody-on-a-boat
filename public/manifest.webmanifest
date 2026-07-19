@@ -1,6 +1,6 @@
 {
-  "name": "Galaxy Boat",
-  "short_name": "GalaxyBoat",
+  "name": "Cody On A Boat",
+  "short_name": "CodyBoat",
   "description": "Get Cody off the boat.",
   "start_url": "./",
   "scope": "./",

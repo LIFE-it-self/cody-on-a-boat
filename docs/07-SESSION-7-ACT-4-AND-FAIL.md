@@ -1,10 +1,10 @@
-# Galaxy Boat — Session 7: Act 4 + Fail State + Victory
+# Cody On A Boat — Session 7: Act 4 + Fail State + Victory
 
-> **For the human (you):** This is Session 7 of 10. The biggest single session in the build — by the end of it, **the entire game is playable end-to-end**. Open a fresh Claude Code chat in your `galaxy-boat` directory. Copy everything below the `---` line.
+> **For the human (you):** This is Session 7 of 10. The biggest single session in the build — by the end of it, **the entire game is playable end-to-end**. Open a fresh Claude Code chat in your `cody-on-a-boat` directory. Copy everything below the `---` line.
 
 ---
 
-You are helping me build **Galaxy Boat**. This is **Session 7 of 10** — the most important session. By the end, the game is functionally complete: a player can play through the full pipe → dinner → shower → nap ritual and either win the game or trigger the hurricane fail cutscene. After this session, the remaining work is art, audio, polish, and shipping.
+You are helping me build **Cody On A Boat**. This is **Session 7 of 10** — the most important session. By the end, the game is functionally complete: a player can play through the full pipe → dinner → shower → nap ritual and either win the game or trigger the hurricane fail cutscene. After this session, the remaining work is art, audio, polish, and shipping.
 
 I am not a software engineer — be explicit, ask permission, never delete things without confirming.
 
