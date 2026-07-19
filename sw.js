@@ -1,6 +1,6 @@
-// Galaxy Boat Service Worker — cache-first strategy for offline play.
+// Cody On A Boat Service Worker — cache-first strategy for offline play.
 // Bump CACHE_VERSION to force a full re-cache on next deploy.
-const CACHE_VERSION = 'galaxy-boat-48b8b02-1784422537287';
+const CACHE_VERSION = 'cody-on-a-boat-0a09f0b-1784427918526';
 
 self.addEventListener('install', (event) => {
   // Activate immediately without waiting for old SW to finish
