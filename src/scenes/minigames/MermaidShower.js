@@ -157,8 +157,19 @@ export default class MermaidShower extends BaseMinigame {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     // Mobile L/R held-buttons (ScubaDive pattern — pointerdown sets a
-    // flag, pointerup AND pointerout clear it so sliding off doesn't stick).
-    this.createTouchButtons();
+    // flag, pointerup AND pointerout clear it so sliding off doesn't
+    // stick). Touch devices only; desktop holds the arrow keys and gets a
+    // key hint instead of buttons over the bathroom.
+    if (this.sys.game.device.input.touch) {
+      this.createTouchButtons();
+    } else {
+      this.add.text(128, 192, 'HOLD ← / →', {
+        font: '8px monospace',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(100);
+    }
 
     this.events.once('shutdown', this.shutdownGame, this);
   }
@@ -169,8 +180,8 @@ export default class MermaidShower extends BaseMinigame {
       { x: 222, label: '\u2192', flag: 'touchRight' },
     ];
     defs.forEach(def => {
-      const bg = this.add.rectangle(def.x, 192, 44, 36, 0xffffff, 0.3);
-      bg.setStrokeStyle(1, 0xffffff, 0.8);
+      const bg = this.add.rectangle(def.x, 192, 44, 36, 0xffffff, 0.2);
+      bg.setStrokeStyle(1, 0xffffff, 0.55);
       bg.setDepth(100);
       bg.setInteractive({ useHandCursor: true });
       bg.on('pointerdown', () => { this[def.flag] = true; });

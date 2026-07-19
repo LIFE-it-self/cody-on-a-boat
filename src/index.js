@@ -16,6 +16,7 @@ import LullabyGame from './scenes/minigames/LullabyGame.js';
 import MermaidNap from './scenes/minigames/MermaidNap.js';
 import CutsceneScene from './scenes/CutsceneScene.js';
 import { registerCutsceneRouter } from './systems/CutsceneRouter.js';
+import { registerMusicKeepAlive } from './systems/MusicManager.js';
 import './systems/FailHandler.js'; // side-effect: registers global hurricane-fail logger
 
 const config = {
@@ -80,6 +81,11 @@ const __game = new Phaser.Game(config);
 // can drive scene.start/stop via the live scene manager. Listeners are
 // module-scoped and persist across scene restarts (FailHandler pattern).
 registerCutsceneRouter(__game);
+
+// Keeps the BGM looping forever: revives the WebAudio context after iOS
+// suspends it (screen lock / calls / app switches) and un-sticks or
+// rebuilds a track that stopped without being asked to.
+registerMusicKeepAlive(__game);
 
 // Debug hook — lets Vite dev tools / preview inspection reach the Phaser
 // game instance. Safe in dev; harmless in prod (the symbol just exists).

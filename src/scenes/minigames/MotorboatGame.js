@@ -92,9 +92,11 @@ export default class MotorboatGame extends BaseMinigame {
       label: 'POWER',
     });
 
-    // Instruction label — names the actual desktop keys, since SPACE is the
-    // trained tap key everywhere else but is deliberately weak here.
-    this.add.text(8, 16, 'ALTERNATE Q/W or L/R!', {
+    // Instruction label — names the inputs the player actually has. SPACE is
+    // the trained tap key everywhere else but is deliberately weak here, so
+    // the real inputs must be spelled out per modality.
+    const isTouch = this.sys.game.device.input.touch;
+    this.add.text(8, 16, isTouch ? 'ALTERNATE L and R!' : 'ALTERNATE Q and W!', {
       font: '8px monospace',
       color: '#aaaaaa',
     }).setDepth(100);
@@ -120,8 +122,9 @@ export default class MotorboatGame extends BaseMinigame {
     this.input.keyboard.on('keydown-W', () => this.altKeyTap('W'));
 
     // Mobile buttons. pointerdown-only (edge trigger) — we want rapid
-    // tapping, not held-button behavior.
-    this.createTouchButtons();
+    // tapping, not held-button behavior. Touch devices only; desktop
+    // already has the Q/W instruction in the top-left label.
+    if (isTouch) this.createTouchButtons();
 
     // Cleanup on scene shutdown (scene.start on return fires shutdown).
     this.events.once('shutdown', this.shutdownGame, this);
@@ -134,8 +137,8 @@ export default class MotorboatGame extends BaseMinigame {
       { x: 222, label: 'R',   onTap: () => this.altKeyTap('R') },
     ];
     defs.forEach(def => {
-      const bg = this.add.rectangle(def.x, 192, 44, 36, 0xffffff, 0.3);
-      bg.setStrokeStyle(1, 0xffffff, 0.8);
+      const bg = this.add.rectangle(def.x, 192, 44, 36, 0xffffff, 0.2);
+      bg.setStrokeStyle(1, 0xffffff, 0.55);
       bg.setDepth(100);
       bg.setInteractive({ useHandCursor: true });
       bg.on('pointerdown', def.onTap);

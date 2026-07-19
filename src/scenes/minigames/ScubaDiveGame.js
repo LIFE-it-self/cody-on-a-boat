@@ -114,7 +114,18 @@ export default class ScubaDiveGame extends BaseMinigame {
       right: Phaser.Input.Keyboard.KeyCodes.D,
     });
 
-    this.createTouchButtons();
+    // Touch d-pad only on touch devices; desktop swims with arrows/WASD and
+    // gets a key hint instead of buttons over the water.
+    if (this.sys.game.device.input.touch) {
+      this.createTouchButtons();
+    } else {
+      this.add.text(4, 214, 'ARROWS/WASD swim', {
+        font: '8px monospace',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setDepth(100);
+    }
   }
 
   // 4 vertical green rectangles at varied x positions, each with a gentle
@@ -146,8 +157,8 @@ export default class ScubaDiveGame extends BaseMinigame {
       { dir: 'right', x: 64, y: 170, label: '\u2192' },
     ];
     defs.forEach(def => {
-      const bg = this.add.rectangle(def.x, def.y, 32, 32, 0xffffff, 0.3);
-      bg.setStrokeStyle(1, 0xffffff, 0.8);
+      const bg = this.add.rectangle(def.x, def.y, 32, 32, 0xffffff, 0.2);
+      bg.setStrokeStyle(1, 0xffffff, 0.55);
       bg.setDepth(100);
       bg.setInteractive({ useHandCursor: true });
       const flagName = 'touch' + def.dir.charAt(0).toUpperCase() + def.dir.slice(1);

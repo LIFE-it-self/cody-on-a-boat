@@ -19,6 +19,7 @@ export default class DialogScene extends Phaser.Scene {
 
   init(data) {
     this.lines = (data && data.lines) || [];
+    this.speaker = (data && data.speaker) || '';
     this.currentLine = 0;
     this.charIndex = 0;
     this.lineFinished = false;
@@ -30,8 +31,18 @@ export default class DialogScene extends Phaser.Scene {
     this.add.rectangle(128, 192, 256, 64, 0x000000, 0.75)
       .setDepth(500);
 
+    // Speaker name in gold above the body, so it's always clear WHO is
+    // talking (Cody, the Ghost Bartender, The Ritual...). The body shifts
+    // down a line to make room; without a speaker it keeps the old layout.
+    if (this.speaker) {
+      this.add.text(8, 163, this.speaker.toUpperCase(), {
+        font: 'bold 8px monospace',
+        color: '#ffe066',
+      }).setDepth(501);
+    }
+
     // Text body inside the box. wordWrap so multi-line dialog wraps cleanly.
-    this.text = this.add.text(8, 168, '', {
+    this.text = this.add.text(8, this.speaker ? 175 : 168, '', {
       font: '8px monospace',
       color: '#ffffff',
       wordWrap: { width: 240 },

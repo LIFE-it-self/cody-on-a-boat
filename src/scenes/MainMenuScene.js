@@ -33,6 +33,13 @@ export default class MainMenuScene extends Phaser.Scene {
       ...strokeStyle,
     }).setOrigin(0.5);
 
+    // Names the player character before the game even starts.
+    this.add.text(w / 2, 112, 'You are Captain Chowder John.', {
+      font: '8px monospace',
+      color: '#ffe066',
+      ...strokeStyle,
+    }).setOrigin(0.5);
+
     // Start button (rectangle background + text label)
     const btnBg = this.add.rectangle(w / 2, 150, 88, 24, 0x1f3a93);
     btnBg.setStrokeStyle(1, 0xffffff);

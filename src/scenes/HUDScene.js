@@ -30,9 +30,11 @@ export default class HUDScene extends Phaser.Scene {
       strokeThickness: 3,
     };
 
-    // Top-left: failure counter, updated via registry change events.
+    // Top-left: failure counter, updated via registry change events. Labeled
+    // "Hurricane" so the stakes read at a glance — fill the bar, get
+    // HURRICANE CODY.
     const initialCount = this.registry.get('failureCount') || 0;
-    this.failText = this.add.text(4, 4, `Failures: ${initialCount}/${FAILURE_THRESHOLD}`, hudStyle)
+    this.failText = this.add.text(4, 4, `Hurricane: ${initialCount}/${FAILURE_THRESHOLD}`, hudStyle)
       .setDepth(1000);
 
     // Top-right: live objective, recomputed whenever the relevant registry
@@ -42,7 +44,7 @@ export default class HUDScene extends Phaser.Scene {
 
     // Subscribe to registry changes for the failure counter.
     this.onFailureChanged = (parent, value) => {
-      this.failText.setText(`Failures: ${value}/${FAILURE_THRESHOLD}`);
+      this.failText.setText(`Hurricane: ${value}/${FAILURE_THRESHOLD}`);
     };
     this.registry.events.on('changedata-failureCount', this.onFailureChanged, this);
 

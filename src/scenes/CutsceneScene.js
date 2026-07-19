@@ -101,13 +101,17 @@ export default class CutsceneScene extends Phaser.Scene {
         repeat: -1,
       });
     }
-    this.add.text(128, 100, 'HURRICANE', {
+    this.add.text(128, 100, 'HURRICANE CODY', {
       font: '16px monospace',
       color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
     }).setOrigin(0.5).setDepth(100);
     this.add.text(128, 124, 'FLORIDA SINKS', {
       font: '10px monospace',
       color: '#ffcccc',
+      stroke: '#000000',
+      strokeThickness: 3,
     }).setOrigin(0.5).setDepth(100);
   }
 
@@ -130,11 +134,15 @@ export default class CutsceneScene extends Phaser.Scene {
     this.add.text(128, 152, 'CODY RULES THE DEEP', {
       font: '12px monospace',
       color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
     }).setOrigin(0.5).setDepth(503);
 
     this.add.text(128, 170, 'FLORIDA IS NO MORE.', {
       font: '10px monospace',
-      color: '#aaaaaa',
+      color: '#dddddd',
+      stroke: '#000000',
+      strokeThickness: 3,
     }).setOrigin(0.5).setDepth(503);
   }
 

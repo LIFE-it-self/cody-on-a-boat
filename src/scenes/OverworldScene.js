@@ -59,10 +59,20 @@ export default class OverworldScene extends Phaser.Scene {
     // 3. Keyboard input: arrow keys, polled in update().
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // 4. On-screen touch buttons (mobile-first). Always visible — desktop
-    //    users can also click them with a mouse.
-    this.createTouchButtons();
-    this.createTalkButton();
+    // 4. On-screen touch buttons — touch devices only. On desktop they just
+    //    crowd the map while duplicating the keyboard, so a one-line key
+    //    hint replaces them.
+    if (this.sys.game.device.input.touch) {
+      this.createTouchButtons();
+      this.createTalkButton();
+    } else {
+      this.add.text(4, 214, 'ARROWS move · Z/ENTER talk', {
+        font: '8px monospace',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setDepth(100);
+    }
 
     // 5. NPCs. Each room has its own cast of characters.
     if (this.roomId === 'main-deck') {
@@ -226,8 +236,10 @@ export default class OverworldScene extends Phaser.Scene {
     ];
 
     buttonDefs.forEach(def => {
-      const bg = this.add.rectangle(def.x, def.y, 32, 32, 0xffffff, 0.3);
-      bg.setStrokeStyle(1, 0xffffff, 0.8);
+      // Slightly translucent so the buttons crowd the map art less; the
+      // interactive hit area is the full rectangle regardless of alpha.
+      const bg = this.add.rectangle(def.x, def.y, 32, 32, 0xffffff, 0.2);
+      bg.setStrokeStyle(1, 0xffffff, 0.55);
       bg.setDepth(100);
       bg.setInteractive({ useHandCursor: true });
       bg.on('pointerdown', () => this.handleMove(def.dir));
@@ -254,8 +266,8 @@ export default class OverworldScene extends Phaser.Scene {
   createTalkButton() {
     const x = 112;
     const y = 170;
-    const bg = this.add.rectangle(x, y, 44, 28, 0xffffff, 0.3);
-    bg.setStrokeStyle(1, 0xffffff, 0.8);
+    const bg = this.add.rectangle(x, y, 44, 28, 0xffffff, 0.2);
+    bg.setStrokeStyle(1, 0xffffff, 0.55);
     bg.setDepth(100);
     bg.setInteractive({ useHandCursor: true });
     bg.on('pointerdown', () => this.tryInteract());
@@ -292,7 +304,7 @@ export default class OverworldScene extends Phaser.Scene {
       this.game.registry.set('talkedToCody', true);
     }
     EventBus.once('dialog-complete', () => this.onDialogComplete(npc));
-    this.scene.launch('DialogScene', { lines: dialog.lines });
+    this.scene.launch('DialogScene', { lines: dialog.lines, speaker: dialog.speaker });
   }
 
   // Session 3 used to hard-launch PlaceholderGame here. Session 4 moves
@@ -310,7 +322,7 @@ export default class OverworldScene extends Phaser.Scene {
     this.softBlockedAt = { x: this.player.tileX, y: this.player.tileY };
     this.dialogActive = true;
     EventBus.once('dialog-complete', () => this.onDialogComplete(null));
-    this.scene.launch('DialogScene', { lines: dialog.lines });
+    this.scene.launch('DialogScene', { lines: dialog.lines, speaker: dialog.speaker });
   }
 
   // Trigger-zone landing handler. Validates the level, runs the ritual

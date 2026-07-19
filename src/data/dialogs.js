@@ -3,13 +3,17 @@
 // not currently rendered (added in a later session if needed).
 
 export const DIALOGS = {
+  // Names both leads and states the stakes up front: the player is CAPTAIN
+  // CHOWDER JOHN, and failure means HURRICANE CODY.
   'cody-intro': {
     speaker: 'Cody',
     lines: [
-      'Captain. We need to talk.',
-      'I cannot leave this boat.',
+      'Captain Chowder John. We need to talk.',
+      'I cannot leave this boat on my own.',
+      'If I stay... I become HURRICANE CODY.',
+      'Florida sinks. Everyone becomes mermaids.',
       'There is a ritual. Pipe. Dinner. Shower. Nap.',
-      'Help me. In that order.',
+      'Help me, Captain. In that order.',
     ],
   },
   // Shown the SECOND time the player talks to Cody after cody-intro.
@@ -36,7 +40,8 @@ export const DIALOGS = {
   'bar-bartender': {
     speaker: 'Ghost Bartender',
     lines: [
-      'Coke first, captain. Always Coke first.',
+      'Coke first, Captain Chowder John.',
+      'Always Coke first.',
       'The pipe wants its smoke after the howl.',
     ],
   },
