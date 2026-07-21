@@ -1,6 +1,6 @@
 // Cody On A Boat Service Worker — cache-first strategy for offline play.
 // Bump CACHE_VERSION to force a full re-cache on next deploy.
-const CACHE_VERSION = 'cody-on-a-boat-a026183-1784600937030';
+const CACHE_VERSION = 'cody-on-a-boat-017beee-1784604285635';
 
 self.addEventListener('install', (event) => {
   // Activate immediately without waiting for old SW to finish
