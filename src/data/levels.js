@@ -13,19 +13,33 @@ export const LEVELS = {
     act: 0,
     config: {},
   },
-  // Act 1 — werewolf rhythm. Cody drinks a Coke, transforms under a moon,
-  // and the player taps in time with 8 howl notes. Not a ritual step (Act 1
-  // setup, not the ritual itself). Mistimed taps dock one hit, so blind
-  // mashing can't clear it.
+  // The horse's riddle (bar). Not tied to an act — it's the side-gate for
+  // the pipe: winning grants VYOOSFRUMTHA CRYHOLE, the only fuel the
+  // ritual pipe burns. Wrong answers count as normal minigame failures.
+  // act: 0 keeps it out of Objective.actMinigameDone's per-act lookup.
+  'horse-riddle': {
+    id: 'horse-riddle',
+    sceneKey: 'HorseRiddle',
+    instruction: 'ANSWER!',
+    hint: 'The horse demands a riddle answered',
+    location: 'The Bar',
+    isRitual: false,
+    act: 0,
+    config: {},
+  },
+  // Act 1 — werewolf MEMORY howl. Cody drinks a Coke, transforms under a
+  // moon, then repeats note patterns back Simon-style (2-note pattern
+  // twice, then a 4-note pattern once). Replaced the scrolling-note rhythm
+  // bar in the playtest-notes session — no timing windows, phone-safe.
   'coke-drink': {
     id: 'coke-drink',
     sceneKey: 'CokeDrinkGame',
     instruction: 'DRINK!',
-    hint: 'Tap when the note hits the green zone',
+    hint: 'Watch the howl, then tap it back on the note buttons',
     location: 'Ship Bar',
     isRitual: false,
     act: 1,
-    config: { beats: 8, requiredHits: 5, noteSpacingMs: 750 },
+    config: { mistakesAllowed: 3 },
   },
   // Act 1 — Ritual Step 1. Tap-to-puff against a draining "PIPE LIT" meter.
   // 5 puffs win the level; BaseMinigame.win() auto-records ritual step 1
@@ -102,19 +116,19 @@ export const LEVELS = {
     act: 3,
     config: { greenZone: [30, 70], targetSecondsInZone: 8, totalDurationMs: 25000, splashIntervalMs: 1400 },
   },
-  // Act 4 — non-ritual lullaby rhythm. Reuses RhythmBar like CokeDrinkGame
-  // (including the mistimed-tap penalty). RhythmBar's NOTE_TRAVEL_MS is
-  // hard-coded at module scope, so we don't pass noteTravelMs here — only
-  // beats, required hits, and note spacing.
+  // Act 4 — COUNTING SHEEP (replaced the RhythmBar lullaby in the
+  // playtest-notes session). Tap to hop the sheep cloud-to-cloud; each
+  // full crossing counts one sheep. Win by counting sheepToCount within
+  // the (generous) timer. On win, the sheep reveal themselves as HORSES.
   'lullaby': {
     id: 'lullaby',
     sceneKey: 'LullabyGame',
-    instruction: 'SING!',
-    hint: 'Tap when the note hits the green zone',
+    instruction: 'COUNT!',
+    hint: 'Tap to hop the sheep from cloud to cloud',
     location: 'Cabin Corridor',
     isRitual: false,
     act: 4,
-    config: { beats: 8, requiredHits: 5, noteSpacingMs: 900 },
+    config: { sheepToCount: 3, totalDurationMs: 30000 },
   },
   // Act 4 — Ritual Step 4 (final). Shush incoming noises to keep Cody
   // asleep. Each missed shush drops Cody's sleep meter by wakeOnMiss —

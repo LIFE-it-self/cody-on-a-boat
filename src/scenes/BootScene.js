@@ -44,6 +44,11 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('cabin-ghost', 'assets/sprites/cabin-ghost.png');
     this.load.image('bridge-parrot', 'assets/sprites/bridge-parrot.png');
     this.load.image('bartender', 'assets/sprites/bartender.png');
+    // Playtest-notes session additions — files may not exist until the next
+    // Claude Design drop; every use site falls back to drawn shapes.
+    this.load.image('horse', 'assets/sprites/horse.png');
+    this.load.image('sheep', 'assets/sprites/sheep.png');
+    this.load.image('cryhole-juice', 'assets/sprites/cryhole-juice.png');
 
     // --- Tilesets ---
     this.load.image('tile-floor', 'assets/tilesets/floor.png');
@@ -81,6 +86,8 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('bg-motorboat', 'assets/backgrounds/bg-motorboat.png');
     this.load.image('bg-mermaid-shower', 'assets/backgrounds/bg-mermaid-shower.png');
     this.load.image('bg-mermaid-nap', 'assets/backgrounds/bg-mermaid-nap.png');
+    this.load.image('bg-counting-sheep', 'assets/backgrounds/bg-counting-sheep.png');
+    this.load.image('bg-horse-riddle', 'assets/backgrounds/bg-horse-riddle.png');
 
     // --- Background music ---
     this.load.audio('bgm-overworld', 'assets/audio/bgm-overworld.mp3');

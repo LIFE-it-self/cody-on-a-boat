@@ -200,8 +200,9 @@ export default class CutsceneScene extends Phaser.Scene {
       '',
       'A CODY ON A BOAT PRODUCTION',
       '',
-      'Captain Chowder John ... You',
-      'Cody ... Cody',
+      'Cody ... You',
+      'Captain Chowder John ... The Guide',
+      'The Horse ... The Horse',
       'The Mermaids ... Local Mermaids',
       '',
       'No hurricanes were summoned.',
@@ -248,7 +249,7 @@ export default class CutsceneScene extends Phaser.Scene {
     stopMusic(this);
 
     // Zero out registry so the next run starts clean (failureCount=0,
-    // ritualProgress=[], completedMinigames=[], talkedToCody=false, ...).
+    // ritualProgress=[], completedMinigames=[], talkedToCaptain=false, ...).
     GameStateManager.reset(this.game);
 
     // Stop every other active/paused scene before starting MainMenu so

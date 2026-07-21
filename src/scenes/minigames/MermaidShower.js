@@ -228,7 +228,8 @@ export default class MermaidShower extends BaseMinigame {
   doSplash() {
     if (this.state !== 'PLAY') return;
     if (this.cache.audio.exists('sfx-splash')) {
-      this.sound.play('sfx-splash', { volume: 0.7 });
+      // 30% quieter — the splash sample is harsh at full mix (playtest note).
+      this.sound.play('sfx-splash', { volume: 0.5 });
     }
 
     // Which mermaid splashes, which way the temp moves.

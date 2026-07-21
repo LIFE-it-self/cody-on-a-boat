@@ -1,6 +1,6 @@
 // Objective — derives "what should the player do next" from the registry.
 // Single source of truth shared by HUDScene (live objective line) and
-// OverworldScene (Cody's state-aware hints, ritual trigger gating).
+// OverworldScene (the Captain's state-aware hints, ritual trigger gating).
 //
 // The next action is always: the current act's minigame if it hasn't been
 // cleared, otherwise the current act's ritual step. Acts are defined by the
@@ -9,14 +9,16 @@
 import { LEVELS } from '../data/levels.js';
 
 // Short labels sized for the 8px HUD font next to the failure counter.
+// Second person — the player IS Cody.
 const OBJECTIVE_LABELS = {
-  'coke-drink': 'Coke with Cody',
+  'coke-drink': 'Drink a Coke',
+  'horse-riddle': 'Ask the horse',
   'pipe-smoke': 'Smoke the pipe',
   'scuba-dive': 'Catch K-fish',
-  'dinner-service': 'Serve dinner',
+  'dinner-service': 'Eat dinner',
   'motorboat': 'Motorboat!!',
-  'mermaid-shower': 'Shower Cody',
-  'lullaby': 'Sing the lullaby',
+  'mermaid-shower': 'Take a shower',
+  'lullaby': 'Count the sheep',
   'mermaid-nap': 'Nap time',
 };
 
@@ -39,6 +41,14 @@ export function getNextStep(game) {
   if (minigame && !done.includes(minigame.id)) {
     return { type: 'minigame', level: minigame };
   }
+
+  // The pipe (step 1) additionally needs VYOOSFRUMTHA CRYHOLE from the
+  // horse's riddle — route the player to the horse before the pipe.
+  if (ritual.id === 'pipe-smoke' && !done.includes('horse-riddle')) {
+    const horse = LEVELS['horse-riddle'];
+    if (horse) return { type: 'minigame', level: horse };
+  }
+
   return { type: 'ritual', level: ritual };
 }
 
@@ -53,7 +63,7 @@ export function actMinigameDone(game, ritualLevel) {
 }
 
 export function getObjectiveText(game) {
-  if (!game.registry.get('talkedToCody')) return 'Objective: Find Cody';
+  if (!game.registry.get('talkedToCaptain')) return 'Objective: Find the Captain';
   const next = getNextStep(game);
   if (!next) return 'Objective: Sail home';
   const label = OBJECTIVE_LABELS[next.level.id] || next.level.instruction;

@@ -19,9 +19,10 @@ export class GameStateManager {
     game.registry.set('completedMinigames', []);
     game.registry.set('selectedCodyVariant', 'default');
     game.registry.set('currentAct', 1);
-    // Set on the first cody-intro dialog. OverworldScene.tryInteract reads
-    // this to swap subsequent Cody chats to the cody-hint-1 line.
-    game.registry.set('talkedToCody', false);
+    // Set on the first captain-intro dialog. OverworldScene.tryInteract
+    // reads this to swap later Captain chats to a state-aware
+    // captain-next-* hint (captain-hint-1 as the fallback).
+    game.registry.set('talkedToCaptain', false);
     // Music state — MusicManager reads/writes these.
     game.registry.set('currentMusicKey', null);
     game.registry.set('currentMusicInstance', null);

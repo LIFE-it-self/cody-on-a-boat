@@ -6,7 +6,6 @@ import Phaser from 'phaser';
 import { TILE_SIZE, COLORS, TILE_TYPES } from '../constants.js';
 import { ROOMS } from '../data/rooms.js';
 import { Player } from '../objects/Player.js';
-import { Cody } from '../objects/Cody.js';
 import { Mermaid } from '../objects/Mermaid.js';
 import { GenericNPC } from '../objects/GenericNPC.js';
 import { DIALOGS } from '../data/dialogs.js';
@@ -74,11 +73,15 @@ export default class OverworldScene extends Phaser.Scene {
       }).setDepth(100);
     }
 
-    // 5. NPCs. Each room has its own cast of characters.
+    // 5. NPCs. Each room has its own cast of characters. The main-deck
+    //    advisor is CAPTAIN CHOWDER JOHN (the player is Cody).
     if (this.roomId === 'main-deck') {
-      this.npcs.push(new Cody(this, 8, 6, 'cody-intro'));
+      this.npcs.push(new GenericNPC(this, 8, 6, 'captain-intro', 'captain', COLORS.CAPTAIN));
     } else if (this.roomId === 'bar') {
       this.npcs.push(new GenericNPC(this, 4, 6, 'bar-bartender', 'bartender', 0x8080c0));
+      // The horse guards the VYOOSFRUMTHA CRYHOLE. Its riddle trigger tile
+      // sits beside it (rooms.js bar triggers).
+      this.npcs.push(new GenericNPC(this, 12, 9, 'bar-horse', 'horse', 0x8b5a2b));
     } else if (this.roomId === 'galley') {
       // Pre-pipe, the galley crew shouldn't claim you "smell like smoke".
       // Dialog is picked at room entry; the scene restarts on every door
@@ -162,7 +165,9 @@ export default class OverworldScene extends Phaser.Scene {
       const py = t.y * TILE_SIZE + TILE_SIZE / 2;
 
       if (level && level.isRitual) {
-        const ready = level.ritualStep === nextStep && actMinigameDone(this.game, level);
+        const ready = level.ritualStep === nextStep
+          && actMinigameDone(this.game, level)
+          && (level.id !== 'pipe-smoke' || done.includes('horse-riddle'));
         if (ready) {
           const marker = this.add.text(px, py, '!', {
             font: '12px monospace',
@@ -289,19 +294,19 @@ export default class OverworldScene extends Phaser.Scene {
     if (!npc) return;
 
     let dialogId = npc.dialogId;
-    if (dialogId === 'cody-intro' && this.game.registry.get('talkedToCody')) {
-      // Re-talking Cody always reports the actual next move so the ritual
-      // order is recoverable at any point, not one-shot memory.
+    if (dialogId === 'captain-intro' && this.game.registry.get('talkedToCaptain')) {
+      // Re-talking the Captain always reports the actual next move so the
+      // ritual order is recoverable at any point, not one-shot memory.
       const next = getNextStep(this.game);
-      dialogId = next ? `cody-next-${next.level.id}` : 'cody-hint-1';
-      if (!DIALOGS[dialogId]) dialogId = 'cody-hint-1';
+      dialogId = next ? `captain-next-${next.level.id}` : 'captain-hint-1';
+      if (!DIALOGS[dialogId]) dialogId = 'captain-hint-1';
     }
     const dialog = DIALOGS[dialogId];
     if (!dialog) return;
 
     this.dialogActive = true;
-    if (npc.dialogId === 'cody-intro') {
-      this.game.registry.set('talkedToCody', true);
+    if (npc.dialogId === 'captain-intro') {
+      this.game.registry.set('talkedToCaptain', true);
     }
     EventBus.once('dialog-complete', () => this.onDialogComplete(npc));
     this.scene.launch('DialogScene', { lines: dialog.lines, speaker: dialog.speaker });
@@ -350,6 +355,12 @@ export default class OverworldScene extends Phaser.Scene {
       }
       if (!actMinigameDone(this.game, level)) {
         this.showBlockedDialog(`ritual-blocked-minigame-${level.act}`);
+        return;
+      }
+      // The pipe additionally demands VYOOSFRUMTHA CRYHOLE — won from the
+      // horse's riddle at the bar.
+      if (level.id === 'pipe-smoke' && !done.includes('horse-riddle')) {
+        this.showBlockedDialog('ritual-blocked-cryhole');
         return;
       }
       // Safety net — with the gates above this always passes; if it ever

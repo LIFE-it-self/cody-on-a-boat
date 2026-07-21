@@ -1,21 +1,28 @@
-// LullabyGame — Act 4 NON-ritual rhythm minigame. Cody is curled up in bed;
-// two mermaids hum around him and the player taps in rhythm to sing him a
-// lullaby. Reuses the same RhythmBar as CokeDrinkGame, but drops that
-// scene's three-phase drink/transform/rhythm intro — the rhythm starts
-// almost immediately.
+// LullabyGame — COUNTING SHEEP. Cody (the player) gets sleepy by counting
+// sheep: every tap hops the sheep to the next cloud; hopping off the last
+// cloud counts one sheep. Count `sheepToCount` sheep before the (generous)
+// timer runs out.
 //
-// Win: hit at least `requiredHits` of the `beats` notes.
-// Lose: anything less than that.
+// Replaced the scrolling-note RhythmBar lullaby in the playtest-notes
+// session — the tap-timing mechanic didn't work reliably on phones, so
+// this has zero timing pressure: every tap hops, hops always land.
 //
-// Not a ritual step. Does NOT call markRitualStep or assertCanStartRitual.
-// The real ritual finale is MermaidNap, which fires in the same room.
-//
-// Pattern lifted from CokeDrinkGame.js (RhythmBar usage, pointerdown +
-// keydown-SPACE input, delayedCall eval window).
+// THE TWIST: on winning, the counted sheep line up, flash, and reveal
+// themselves to have been HORSES all along. (See also: the horse at the
+// bar. The horses know something.)
 
 import { BaseMinigame } from './BaseMinigame.js';
-import { RhythmBar } from '../../ui/RhythmBar.js';
 import { playMusic } from '../../systems/MusicManager.js';
+
+// Cloud platform positions, left to right. The sheep enters at cloud 0 and
+// exits off-screen right after the last cloud.
+const CLOUDS = [
+  { x: 40, y: 150 },
+  { x: 100, y: 138 },
+  { x: 160, y: 150 },
+  { x: 220, y: 136 },
+];
+const HOP_MS = 380;
 
 export default class LullabyGame extends BaseMinigame {
   constructor() {
@@ -26,136 +33,230 @@ export default class LullabyGame extends BaseMinigame {
     playMusic(this, 'bgm-minigame');
 
     const cfg = (this.levelConfig && this.levelConfig.config) || {};
-    this.beats = cfg.beats || 8;
-    this.required = cfg.requiredHits || 6;
-    this.spacing = cfg.noteSpacingMs || 800;
-    this.hits = 0;
+    this.sheepToCount = cfg.sheepToCount || 3;
+    this.totalMs = cfg.totalDurationMs || 30000;
+    this.elapsedMs = 0;
+    this.counted = 0;
+    this.hopping = false;
+    this.cloudIndex = 0;
+    this.revealing = false;
+    this.timers = [];
 
-    // Painted bedroom background (bedframe is part of the art).
-    // Falls back to a dark blue solid color + gray bed rect if the image is missing.
-    if (this.textures.exists('bg-lullaby')) {
-      this.add.image(128, 112, 'bg-lullaby').setDepth(-100);
+    // Dreamy night-sky backdrop — painted art when it exists.
+    if (this.textures.exists('bg-counting-sheep')) {
+      this.add.image(128, 112, 'bg-counting-sheep').setDepth(-100);
     } else {
-      this.add.rectangle(128, 112, 256, 224, 0x101830);
-      this.add.rectangle(128, 130, 80, 20, 0x606060)
-        .setStrokeStyle(1, 0x909090);
-    }
-
-    // Cody on the bed.
-    if (this.textures.exists('cody')) {
-      this.cody = this.add.sprite(128, 118, 'cody').setDisplaySize(16, 16).setDepth(10);
-    } else {
-      this.cody = this.add.rectangle(128, 118, 16, 16, 0x40c040).setDepth(10);
+      this.add.rectangle(128, 112, 256, 224, 0x0a1030);
+      this.add.circle(224, 32, 12, 0xfff0a0).setDepth(1);
+      for (let i = 0; i < 24; i++) {
+        this.add.circle((i * 53) % 256, (i * 37) % 120, 1, 0xffffff, 0.8);
+      }
     }
 
-    // Two mermaids humming alongside — gentle yoyo to feel alive.
-    let mermaidLeft, mermaidRight;
-    if (this.textures.exists('mermaid-1')) {
-      mermaidLeft = this.add.sprite(96, 142, 'mermaid-1').setDisplaySize(14, 18).setDepth(9);
-    } else {
-      mermaidLeft = this.add.rectangle(96, 142, 14, 18, 0xff69b4).setDepth(9);
-    }
-    if (this.textures.exists('mermaid-2')) {
-      mermaidRight = this.add.sprite(160, 142, 'mermaid-2').setDisplaySize(14, 18).setDepth(9);
-    } else {
-      mermaidRight = this.add.rectangle(160, 142, 14, 18, 0xff69b4).setDepth(9);
-    }
-    this.tweens.add({
-      targets: [mermaidLeft, mermaidRight],
-      y: '-=3',
-      duration: 900,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
+    // Cloud platforms — puffs of overlapping circles.
+    CLOUDS.forEach(c => {
+      this.add.ellipse(c.x, c.y + 8, 46, 16, 0xffffff, 0.95).setDepth(5);
+      this.add.circle(c.x - 12, c.y + 4, 8, 0xffffff, 0.95).setDepth(5);
+      this.add.circle(c.x + 4, c.y + 1, 10, 0xffffff, 0.95).setDepth(5);
+      this.add.circle(c.x + 16, c.y + 5, 7, 0xffffff, 0.95).setDepth(5);
     });
 
-    // Small musical note cues over each mermaid — decorative text only.
-    this.add.text(96, 122, '\u266A', {
-      font: '10px monospace',
-      color: '#ff69b4',
-    }).setOrigin(0.5).setDepth(9);
-    this.add.text(160, 122, '\u266A', {
-      font: '10px monospace',
-      color: '#ff69b4',
-    }).setOrigin(0.5).setDepth(9);
-
-    // HUD labels.
-    this.add.text(8, 16, 'TAP LULLABY', {
-      font: '8px monospace',
-      color: '#aaaaaa',
-    }).setDepth(100);
-
-    this.hitText = this.add.text(248, 16, '0/' + this.beats, {
+    // HUD.
+    this.add.text(8, 16, 'COUNT THE SHEEP', {
       font: '8px monospace',
       color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setDepth(100);
+
+    this.countText = this.add.text(248, 16, `0/${this.sheepToCount} sheep`, {
+      font: '8px monospace',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 3,
     }).setOrigin(1, 0).setDepth(100);
 
-    // RhythmBar — same geometry and call shape as CokeDrinkGame:77.
-    this.rhythmBar = new RhythmBar(this, 16, 188, 224, 20);
-    for (let i = 0; i < this.beats; i++) {
-      this.rhythmBar.addNote(1000 + i * this.spacing);
+    this.timerText = this.add.text(128, 16, Math.ceil(this.totalMs / 1000).toString(), {
+      font: 'bold 10px monospace',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0.5, 0).setDepth(100);
+
+    const isTouch = this.sys.game.device.input.touch;
+    this.add.text(128, 208, isTouch ? 'TAP to hop the sheep' : 'TAP / SPACE to hop the sheep', {
+      font: '8px monospace',
+      color: '#aaaaff',
+      stroke: '#000000',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(100);
+
+    this.spawnSheep();
+
+    this.input.on('pointerdown', () => this.tryHop());
+    this.input.keyboard.on('keydown-SPACE', () => this.tryHop());
+
+    this.events.once('shutdown', this.shutdownGame, this);
+  }
+
+  pushTimer(t) {
+    this.timers.push(t);
+    return t;
+  }
+
+  makeSheepVisual(x, y) {
+    if (this.textures.exists('sheep')) {
+      return this.add.sprite(x, y, 'sheep').setDisplaySize(18, 18).setDepth(10);
     }
-    this.rhythmBar.start();
+    // Drawn fallback: fluffy white body + dark head.
+    const body = this.add.container(x, y, [
+      this.add.ellipse(0, 0, 18, 12, 0xf8f8f8),
+      this.add.circle(-8, -2, 5, 0x303030),
+      this.add.rectangle(-4, 7, 2, 5, 0x303030),
+      this.add.rectangle(4, 7, 2, 5, 0x303030),
+    ]).setDepth(10);
+    return body;
+  }
 
-    // Tap OR SPACE both count as a hit attempt.
-    this.input.on('pointerdown', () => this.tryHit());
-    this.input.keyboard.on('keydown-SPACE', () => this.tryHit());
-
-    // Eval after the last note's hit window closes (~300ms buffer).
-    const lastNoteAt = 1000 + (this.beats - 1) * this.spacing;
-    this.time.delayedCall(lastNoteAt + 300, () => {
-      if (this.state !== 'PLAY') return;
-      if (this.hits >= this.required) this.win();
-      else this.lose();
+  spawnSheep() {
+    this.cloudIndex = 0;
+    const c = CLOUDS[0];
+    this.sheep = this.makeSheepVisual(-20, c.y - 10);
+    // Drift in from the left onto the first cloud.
+    this.hopping = true;
+    this.tweens.add({
+      targets: this.sheep,
+      x: c.x,
+      duration: 350,
+      ease: 'Sine.Out',
+      onComplete: () => { this.hopping = false; },
     });
   }
 
-  tryHit() {
-    if (this.state !== 'PLAY' || !this.rhythmBar) return;
-    const landed = this.rhythmBar.hit();
-    if (landed) {
-      this.hits++;
-      if (this.hitText && this.hitText.active) {
-        this.hitText.setText(this.hits + '/' + this.beats);
-      }
-      if (this.cache.audio.exists('sfx-ding')) {
-        this.sound.play('sfx-ding', { volume: 0.7 });
-      }
-      if (this.cody && this.cody.active) {
-        if (this.cody.setTint) {
-          this.cody.setTint(0x208020);
-          this.time.delayedCall(120, () => {
-            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.clearTint();
-          });
-        } else {
-          this.cody.setFillStyle(0x208020);
-          this.time.delayedCall(120, () => {
-            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.setFillStyle(0x40c040);
-          });
-        }
-      }
-    } else {
-      // Wrong-timing tap — dock a hit so mashing can't clear the game,
-      // and flash Cody red briefly (CokeDrinkGame pattern).
-      if (this.hits > 0) {
-        this.hits--;
-        if (this.hitText && this.hitText.active) {
-          this.hitText.setText(this.hits + '/' + this.beats);
-        }
-      }
-      if (this.cody && this.cody.active) {
-        if (this.cody.setTint) {
-          this.cody.setTint(0xff4040);
-          this.time.delayedCall(100, () => {
-            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.clearTint();
-          });
-        } else {
-          this.cody.setFillStyle(0xff4040);
-          this.time.delayedCall(100, () => {
-            if (this.state === 'PLAY' && this.cody && this.cody.active) this.cody.setFillStyle(0x40c040);
-          });
-        }
-      }
+  tryHop() {
+    if (this.state !== 'PLAY' || this.hopping || this.revealing || !this.sheep) return;
+    this.hopping = true;
+
+    const lastCloud = this.cloudIndex >= CLOUDS.length - 1;
+    const targetX = lastCloud ? 290 : CLOUDS[this.cloudIndex + 1].x;
+    const targetY = lastCloud ? CLOUDS[this.cloudIndex].y - 10 : CLOUDS[this.cloudIndex + 1].y - 10;
+    const startY = this.sheep.y;
+
+    if (this.cache.audio.exists('sfx-ding')) {
+      const s = this.sound.add('sfx-ding');
+      s.play({ rate: 1.3, volume: 0.35 });
+      this.pushTimer(this.time.delayedCall(220, () => { s.stop(); s.destroy(); }));
     }
+
+    // Arc: linear x, up-and-over y.
+    this.tweens.add({ targets: this.sheep, x: targetX, duration: HOP_MS, ease: 'Linear' });
+    this.tweens.add({
+      targets: this.sheep,
+      y: Math.min(startY, targetY) - 26,
+      duration: HOP_MS / 2,
+      ease: 'Quad.Out',
+      yoyo: true,
+      onYoyo: () => { if (this.sheep) this.sheep.y = Math.min(startY, targetY) - 26; },
+      onComplete: () => {
+        if (this.state !== 'PLAY' || !this.sheep) return;
+        this.sheep.y = targetY;
+        if (lastCloud) {
+          this.countSheep();
+        } else {
+          this.cloudIndex++;
+          this.hopping = false;
+        }
+      },
+    });
+  }
+
+  countSheep() {
+    this.counted++;
+    if (this.countText && this.countText.active) {
+      this.countText.setText(`${this.counted}/${this.sheepToCount} sheep`);
+    }
+    // Big dreamy count number floats up.
+    const big = this.add.text(128, 100, `${this.counted}`, {
+      font: 'bold 28px monospace',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(120);
+    this.tweens.add({
+      targets: big,
+      y: 70,
+      alpha: 0,
+      duration: 800,
+      onComplete: () => { if (big.active) big.destroy(); },
+    });
+
+    if (this.sheep) { this.sheep.destroy(); this.sheep = null; }
+
+    if (this.counted >= this.sheepToCount) {
+      this.revealHorses();
+    } else {
+      // spawnSheep manages the hopping lock itself (locked until the new
+      // sheep's drift-in lands).
+      this.pushTimer(this.time.delayedCall(300, () => {
+        if (this.state === 'PLAY') this.spawnSheep();
+      }));
+    }
+  }
+
+  // THE TWIST. The counted sheep line up center-stage, flash, and turn out
+  // to have been horses all along. Then the win overlay fires.
+  revealHorses() {
+    this.revealing = true;
+    const xs = [80, 128, 176];
+    const actors = xs.map(x => this.makeSheepVisual(x, 112));
+
+    this.pushTimer(this.time.delayedCall(700, () => {
+      if (this.state !== 'PLAY') return;
+      const flash = this.add.rectangle(128, 112, 256, 224, 0xffffff, 0.8).setDepth(150);
+      this.tweens.add({ targets: flash, alpha: 0, duration: 400, onComplete: () => flash.destroy() });
+
+      actors.forEach((a, i) => {
+        a.destroy();
+        if (this.textures.exists('horse')) {
+          this.add.sprite(xs[i], 112, 'horse').setDisplaySize(22, 22).setDepth(151);
+        } else {
+          this.add.rectangle(xs[i], 112, 18, 16, 0x8b5a2b).setStrokeStyle(1, 0xffffff).setDepth(151);
+        }
+      });
+
+      this.add.text(128, 84, 'WAIT.', {
+        font: 'bold 12px monospace',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(152);
+      this.add.text(128, 140, 'THOSE ARE HORSES.', {
+        font: 'bold 12px monospace',
+        color: '#ffe066',
+        stroke: '#000000',
+        strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(152);
+
+      this.pushTimer(this.time.delayedCall(1600, () => {
+        if (this.state === 'PLAY') this.win();
+      }));
+    }));
+  }
+
+  update(time, delta) {
+    if (this.state !== 'PLAY' || this.revealing) return;
+    this.elapsedMs += delta;
+    if (this.timerText && this.timerText.active) {
+      const remaining = Math.max(0, this.totalMs - this.elapsedMs);
+      this.timerText.setText(Math.ceil(remaining / 1000).toString());
+    }
+    if (this.elapsedMs >= this.totalMs) {
+      this.lose();
+    }
+  }
+
+  shutdownGame() {
+    this.timers.forEach((t) => { if (t) t.remove(false); });
+    this.timers = [];
   }
 }

@@ -114,8 +114,38 @@ export function registerMusicKeepAlive(game) {
     }
   };
 
-  // Any tap/click is a valid user gesture to revive a suspended context.
-  document.addEventListener('pointerdown', resumeContext, true);
+  // iOS SILENT-SWITCH FIX ("the music is not playing on my iPhone"):
+  // Safari mutes ALL WebAudio output while the phone is in silent/Ring-off
+  // mode. Playing any HTML5 <audio> element — even a silent one — flips
+  // Safari's audio session to "playback" mode, which ignores the silent
+  // switch. So on the first user gesture we start a tiny looping silent
+  // wav via an <audio> tag; from then on the game's WebAudio is audible
+  // regardless of the switch. (The standard "unmute" technique used by
+  // web games; a no-op on every other platform.)
+  const SILENT_WAV =
+    'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+  let unmuteEl = null;
+  const ensureUnmute = () => {
+    if (unmuteEl) return;
+    try {
+      unmuteEl = document.createElement('audio');
+      unmuteEl.setAttribute('playsinline', '');
+      unmuteEl.setAttribute('preload', 'auto');
+      unmuteEl.src = SILENT_WAV;
+      unmuteEl.loop = true;
+      const p = unmuteEl.play();
+      if (p && p.catch) p.catch(() => { unmuteEl = null; });
+    } catch {
+      unmuteEl = null;
+    }
+  };
+
+  // Any tap/click is a valid user gesture to revive a suspended context
+  // and to arm the silent-switch workaround.
+  document.addEventListener('pointerdown', () => {
+    ensureUnmute();
+    resumeContext();
+  }, true);
   window.addEventListener('focus', resumeContext);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) resumeContext();

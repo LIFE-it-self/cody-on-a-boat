@@ -216,7 +216,8 @@ export default class ScubaDiveGame extends BaseMinigame {
       this.fishText.setText('Fish: ' + this.hits + '/' + this.targetFish);
     }
     if (this.cache.audio.exists('sfx-splash')) {
-      this.sound.play('sfx-splash', { volume: 0.7 });
+      // 30% quieter — the splash sample is harsh at full mix (playtest note).
+      this.sound.play('sfx-splash', { volume: 0.5 });
     }
     if (this.player && this.player.active) {
       if (this.player.setTint) {

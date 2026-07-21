@@ -18,8 +18,8 @@ export const COLORS = {
   FLOOR: 0x4a3a2a,         // brown wood
   WALL: 0x222222,          // dark gray
   DOOR: 0xc8a050,          // gold-ish
-  PLAYER: 0x4080ff,        // Captain Chowder John
-  CODY: 0x40c040,          // Cody (used in later sessions)
+  CAPTAIN: 0x4080ff,       // Captain Chowder John — the advisor NPC's fallback
+  CODY: 0x40c040,          // Cody — the PLAYER's fallback (characters swapped 9.9)
   INTERACT_ZONE: 0xffff00, // yellow "!" markers (later)
   BG: 0x0a0e27,            // dark navy background
 };

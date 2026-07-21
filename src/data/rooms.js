@@ -105,6 +105,10 @@ export const ROOMS = {
       // Coke-drink minigame. Right side of the bar, away from doors and
       // the default spawn at (8,7). Returns the player to (12,3).
       { x: 12, y: 4, levelId: 'coke-drink' },
+      // The horse's riddle. Beside the horse NPC at (12,9); winning grants
+      // the VYOOSFRUMTHA CRYHOLE the pipe ritual requires. Returns the
+      // player to (11,8).
+      { x: 11, y: 9, levelId: 'horse-riddle' },
     ],
     playerSpawn: { x: 8, y: 7 },
   },

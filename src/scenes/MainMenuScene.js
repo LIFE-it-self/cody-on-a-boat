@@ -27,14 +27,14 @@ export default class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Subtitle
-    this.add.text(w / 2, 95, 'Get Cody off the boat.', {
+    this.add.text(w / 2, 95, 'Get yourself off the boat.', {
       font: '10px monospace',
       color: '#c0c0c0',
       ...strokeStyle,
     }).setOrigin(0.5);
 
     // Names the player character before the game even starts.
-    this.add.text(w / 2, 112, 'You are Captain Chowder John.', {
+    this.add.text(w / 2, 112, 'You are Cody. The Captain will guide you.', {
       font: '8px monospace',
       color: '#ffe066',
       ...strokeStyle,

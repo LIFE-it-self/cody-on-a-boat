@@ -6,9 +6,9 @@ This is the condensed design document. Every Claude Code session reads this. If 
 
 ## 1. The pitch
 
-You are **Captain Chowder John**. Your friend **Cody** is stuck on the boat. The only way off is a four-step ritual that must be done in order:
+You are **Cody**, stuck on the boat. **Captain Chowder John** is the stationary advisor on the main deck who guides you. *(Swapped in the playtest-notes-2 session — originally the player was the Captain.)* The only way off is a four-step ritual that must be done in order:
 
-1. **Smoke a pipe**
+1. **Smoke a pipe** — which burns only **VYOOSFRUMTHA CRYHOLE**, a substance won from **the horse at the bar** by answering its riddle
 2. **Eat a Michelin-starred dinner**
 3. **Shower with mermaids**
 4. **Nap with mermaids**
@@ -28,10 +28,12 @@ The game has four acts. Each act has one minigame followed by one ritual step.
 
 | Act | Minigame | Ritual Step |
 |-----|----------|-------------|
-| 1 | **CokeDrink** — Cody drinks a Coke and turns into a werewolf. 8-beat rhythm tap to howl correctly (mistimed taps dock a hit). | **Pipe Smoke** — Tap steadily to puff (the pipe needs a beat between puffs). Chain 5 puffs without letting it go out. |
+| 1 | **CokeDrink** — Cody drinks a Coke and turns into a werewolf, then repeats howl patterns back Simon-style (a 2-note pattern twice, then a 4-note pattern once; 3 mistakes lose). | **Pipe Smoke** — Tap steadily to puff (the pipe needs a beat between puffs). Chain 5 puffs without letting it go out. **Also requires VYOOSFRUMTHA CRYHOLE** (see side-gate below). |
 | 2 | **ScubaDive** — Top-down underwater swim. Collect golden K-shaped fish before time runs out. Avoid red K-fish. | **Dinner Service** — 3 courses, each with 3 menu options. Pick the absurd Michelin-worthy one each time. |
-| 3 | **Motorboat** — Cody shoves his face into the dashboard and blows. Alternate Q/W (or tap L/R) to keep a power meter above empty. | **Mermaid Shower** — Slide a temperature knob. Mermaids randomly nudge it. Accumulate enough time in the green zone. |
-| 4 | **Lullaby** — Rhythm tap along to a mermaid lullaby (mistimed taps dock a hit). | **Mermaid Nap** — Cody falls asleep. Tap to shush 4 noises (seagull, foghorn, wave, parrot); missing 2 wakes him. |
+| 3 | **Motorboat** — Cody shoves his face into the dashboard and blows, whipping between the two mermaids. Alternate Q/W (or tap L/R) to keep a power meter above empty. | **Mermaid Shower** — Slide a temperature knob. Mermaids randomly nudge it. Accumulate enough time in the green zone. |
+| 4 | **Counting Sheep** — Tap to hop a sheep from cloud to cloud; count 3 sheep. On winning, the sheep reveal themselves to have been HORSES all along. | **Mermaid Nap** — Cody falls asleep. Tap to shush 4 noises (seagull, foghorn, wave, parrot); missing 2 wakes him. |
+
+**Side-gate:** the **Horse Riddle** (bar). The horse guards VYOOSFRUMTHA CRYHOLE, the only fuel the ritual pipe burns. Answer its simple riddle to obtain it; the pipe soft-blocks until you have. A wrong answer counts as a normal minigame failure and the riddle can be retried.
 
 *(Exact counts, timers, and thresholds live in `src/data/levels.js` — that file is the tuning source of truth; this table describes the mechanics.)*
 

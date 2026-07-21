@@ -1,4 +1,6 @@
-// Player — Captain Chowder John.
+// Player — CODY. (Swapped in the character-swap session: the player IS
+// Cody now; Captain Chowder John is the stationary advisor NPC on the
+// main deck.)
 //
 // Plain JS class (intentionally NOT a Phaser plugin or game object subclass).
 // Wraps a single rectangle sprite and exposes tile-snapped 4-direction
@@ -17,11 +19,11 @@ export class Player {
     const px = tileX * TILE_SIZE + TILE_SIZE / 2;
     const py = tileY * TILE_SIZE + TILE_SIZE / 2;
 
-    if (scene.textures.exists('captain')) {
-      this.sprite = scene.add.sprite(px, py, 'captain');
+    if (scene.textures.exists('cody')) {
+      this.sprite = scene.add.sprite(px, py, 'cody');
       this.sprite.setDisplaySize(TILE_SIZE, TILE_SIZE);
     } else {
-      this.sprite = scene.add.rectangle(px, py, TILE_SIZE, TILE_SIZE, COLORS.PLAYER);
+      this.sprite = scene.add.rectangle(px, py, TILE_SIZE, TILE_SIZE, COLORS.CODY);
     }
     this.sprite.setDepth(10);
   }

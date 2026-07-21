@@ -54,7 +54,7 @@ export default class HUDScene extends Phaser.Scene {
     };
     this.registry.events.on('changedata-ritualProgress', this.onObjectiveChanged, this);
     this.registry.events.on('changedata-completedMinigames', this.onObjectiveChanged, this);
-    this.registry.events.on('changedata-talkedToCody', this.onObjectiveChanged, this);
+    this.registry.events.on('changedata-talkedToCaptain', this.onObjectiveChanged, this);
 
     this.events.once('shutdown', this.shutdown, this);
   }
@@ -66,7 +66,7 @@ export default class HUDScene extends Phaser.Scene {
     if (this.onObjectiveChanged) {
       this.registry.events.off('changedata-ritualProgress', this.onObjectiveChanged, this);
       this.registry.events.off('changedata-completedMinigames', this.onObjectiveChanged, this);
-      this.registry.events.off('changedata-talkedToCody', this.onObjectiveChanged, this);
+      this.registry.events.off('changedata-talkedToCaptain', this.onObjectiveChanged, this);
     }
   }
 }

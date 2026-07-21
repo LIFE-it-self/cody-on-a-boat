@@ -7,6 +7,7 @@ import DialogScene from './scenes/DialogScene.js';
 import TransitionScene from './scenes/TransitionScene.js';
 import PlaceholderGame from './scenes/minigames/PlaceholderGame.js';
 import CokeDrinkGame from './scenes/minigames/CokeDrinkGame.js';
+import HorseRiddle from './scenes/minigames/HorseRiddle.js';
 import PipeSmoke from './scenes/minigames/PipeSmoke.js';
 import ScubaDiveGame from './scenes/minigames/ScubaDiveGame.js';
 import DinnerService from './scenes/minigames/DinnerService.js';
@@ -63,6 +64,7 @@ const config = {
     TransitionScene,
     PlaceholderGame,
     CokeDrinkGame,
+    HorseRiddle,
     PipeSmoke,
     ScubaDiveGame,
     DinnerService,

@@ -59,11 +59,13 @@ export default class MotorboatGame extends BaseMinigame {
       this.add.rectangle(128, 140, 200, 16, 0x886844).setStrokeStyle(1, 0xffffff);
     }
 
-    // Cody — pressed into the dashboard from behind.
+    // Cody — pressed into the dashboard from behind. Drawn BIG (32x32,
+    // playtest note) and he whips his face toward whichever mermaid's side
+    // was tapped last (see faceMermaid()).
     if (this.textures.exists('cody')) {
-      this.cody = this.add.sprite(128, 128, 'cody').setDisplaySize(16, 16);
+      this.cody = this.add.sprite(128, 120, 'cody').setDisplaySize(32, 32).setDepth(6);
     } else {
-      this.cody = this.add.rectangle(128, 128, 16, 16, 0x40c040);
+      this.cody = this.add.rectangle(128, 120, 32, 32, 0x40c040).setDepth(6);
     }
 
     // Two mermaids on the dashboard. baseY anchors the sine bounce.
@@ -102,9 +104,13 @@ export default class MotorboatGame extends BaseMinigame {
     }).setDepth(100);
 
     // Countdown text (top-right, clear of the POWER label at ~y=50).
-    this.timerText = this.add.text(220, 16, Math.ceil(this.durationMs / 1000).toString(), {
-      font: '12px monospace',
-      color: '#ffff80',
+    // White with a heavy black stroke — the old yellow was invisible
+    // against the painted sky (playtest note).
+    this.timerText = this.add.text(220, 14, Math.ceil(this.durationMs / 1000).toString(), {
+      font: 'bold 14px monospace',
+      color: '#ffffff',
+      stroke: '#000000',
+      strokeThickness: 4,
     }).setOrigin(1, 0).setDepth(100);
 
     // Wake spray — one looping timer whose delay is re-assigned every
@@ -164,7 +170,22 @@ export default class MotorboatGame extends BaseMinigame {
     const power = (this.lastAltKey === key) ? this.samePower : this.altPower;
     this.powerMeter.add(power);
     this.lastAltKey = key;
+    // Q/L are the LEFT mermaid's side, W/R the RIGHT — Cody's face whips
+    // back and forth between the mermaids as the player alternates.
+    this.faceMermaid(key === 'Q' || key === 'L' ? 'left' : 'right');
     this._playSplash();
+  }
+
+  // Flip Cody toward the tapped mermaid with a little head-whip scale pop.
+  faceMermaid(side) {
+    if (!this.cody || !this.cody.active) return;
+    if (this.cody.setFlipX) this.cody.setFlipX(side === 'left');
+    this.tweens.add({
+      targets: this.cody,
+      x: side === 'left' ? 122 : 134,
+      duration: 80,
+      ease: 'Quad.Out',
+    });
   }
 
   centerTap() {
@@ -176,7 +197,8 @@ export default class MotorboatGame extends BaseMinigame {
 
   _playSplash() {
     if (this.time.now - this.lastSplashTime > 80 && this.cache.audio.exists('sfx-splash')) {
-      this.sound.play('sfx-splash', { volume: 0.3 });
+      // 30% quieter — rapid-fire splashes read harsh (playtest note).
+      this.sound.play('sfx-splash', { volume: 0.21 });
       this.lastSplashTime = this.time.now;
     }
   }
